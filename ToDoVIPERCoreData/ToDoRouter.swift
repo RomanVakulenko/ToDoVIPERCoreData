@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ToDoRoutingLogic: AnyObject {
-    func routeToTaskDetailsScreen()
+    func routeToOneTaskDetailsScreen()
 }
 
 
@@ -19,7 +19,7 @@ final class ToDoRouter: ToDoRoutingLogic {
     weak var dataStore: ToDoPresenterDataStore?
 
     // MARK: - Public methods
-    func routeToTaskDetailsScreen() {
+    func routeToOneTaskDetailsScreen() {
         //        if let id = dataStore?.model {
         //                let oneTaskDetailsController = OneTaskDetailsBuilder().getControllerWith(model: model)
         //                let navigationController = UINavigationController(rootViewController: viewController)

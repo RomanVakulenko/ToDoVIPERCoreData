@@ -10,7 +10,8 @@ import SnapKit
 
 
 protocol ToDoViewOutput: AnyObject,
-                         ToDoTableCellViewModelOutput,
+                         ToDoTableViewCellViewOutput,
+                         ToDoCellViewModelOutput,
                          CollectionFilterViewOutput {
     func didTapNewTaskButton()
 }
@@ -25,6 +26,10 @@ protocol ToDoViewLogic: UIView {
 
 final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
 
+    enum Constants {
+        static let newButtonWidth: CGFloat = 128
+        static let width: CGFloat = 140
+    }
 
     // MARK: - Public properties
 
@@ -54,8 +59,8 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
 
     private lazy var newTaskButton: UIButton = {
         let view = UIButton(type: .system)
-        view.backgroundColor = UIHelper.Color.blueBackNewTask
-        view.layer.cornerRadius = UIHelper.Margins.medium8px
+        view.backgroundColor = .none
+        view.layer.cornerRadius = UIHelper.Margins.medium16px
         view.addTarget(self, action: #selector(didTapNewTaskButton(_:)), for: .touchUpInside)
         return view
     }()
@@ -65,7 +70,23 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
         return view
     }()
 
-    private let tableView = UITableView()
+    private(set) lazy var layout: UICollectionViewFlowLayout = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        return layout
+    }()
+
+    private(set) lazy var collectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.register(cellType: ToDoCollectionViewCell.self)
+//        collectionView.isUserInteractionEnabled = true
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.backgroundColor = .none
+        collectionView.isScrollEnabled = true
+        collectionView.showsHorizontalScrollIndicator = false
+        return collectionView
+    }()
 
     private var viewModel: ToDoModel.ViewModel?
 
@@ -92,8 +113,12 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
         backgroundColor = viewModel.backViewColor
         backView.backgroundColor = viewModel.backViewColor
 
+        screenTitle.attributedText = viewModel.screenTitle
+        subtitle.attributedText = viewModel.subtitle
+
         if newTaskButton.backgroundColor != viewModel.newTaskButtonTitle {
             newTaskButton.setAttributedTitle(viewModel.newTaskButtonTitle, for: .normal)
+            newTaskButton.backgroundColor = viewModel.newTaskButtonBackColor
         }
 
         for (i, _) in viewModel.views.enumerated() {
@@ -109,7 +134,7 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
             }
         }
 
-        tableView.reloadData()
+        collectionView.reloadData()
     }
 
     func displayWaitIndicator(viewModel: ToDoScreenFlow.OnWaitIndicator.ViewModel) {
@@ -125,23 +150,22 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
         output?.didTapNewTaskButton()
     }
 
-      // MARK: - Private Methods
+    // MARK: - Private Methods
 
     private func configure() {
         addSubviews()
         configureConstraints()
-        tableView.register(cellType: ToDoTableViewCell.self)
-        tableView.dataSource = self
-        tableView.separatorStyle = .none
-        tableView.showsVerticalScrollIndicator = false
-        tableView.showsHorizontalScrollIndicator = false
-        tableView.delaysContentTouches = false
+        collectionView.register(cellType: ToDoCollectionViewCell.self)
+        collectionView.dataSource = self
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.delaysContentTouches = false
     }
 
 
     private func addSubviews() {
         self.addSubview(backView)
-        [screenTitle, subtitle, newTaskButton, filterView, tableView].forEach { backView.addSubview($0) }
+        [screenTitle, subtitle, newTaskButton, filterView, collectionView].forEach { backView.addSubview($0) }
     }
 
     private func configureConstraints() {
@@ -152,53 +176,84 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
 
         screenTitle.snp.makeConstraints {
             $0.top.equalTo(backView.snp.top).offset(UIHelper.Margins.large22px)
-            $0.leading.equalToSuperview()
+            $0.leading.equalToSuperview().offset(UIHelper.Margins.medium16px)
         }
 
         subtitle.snp.makeConstraints {
             $0.top.equalTo(screenTitle.snp.bottom).offset(UIHelper.Margins.medium8px)
-            $0.leading.equalToSuperview()
+            $0.leading.equalToSuperview().offset(UIHelper.Margins.medium16px)
         }
 
         newTaskButton.snp.makeConstraints {
-            $0.top.equalTo(backView.snp.bottom).offset(UIHelper.Margins.large26px)
-            $0.trailing.equalToSuperview()
+            $0.top.equalTo(backView.snp.top).offset(UIHelper.Margins.large26px)
+            $0.trailing.equalToSuperview().offset(-UIHelper.Margins.medium16px)
+            $0.height.equalTo(UIHelper.Margins.huge42px)
+            $0.width.equalTo(Constants.newButtonWidth)
         }
 
         filterView.snp.makeConstraints {
             $0.top.equalTo(subtitle.snp.bottom).offset(UIHelper.Margins.large26px)
-            $0.height.equalTo(UIHelper.Margins.large26px)
-            $0.leading.equalToSuperview()
+            $0.height.equalTo(UIHelper.Margins.large30px)
+            $0.leading.equalToSuperview().offset(UIHelper.Margins.medium16px)
+            $0.trailing.equalToSuperview().offset(-UIHelper.Margins.medium16px)
         }
 
-        tableView.snp.makeConstraints {
+        collectionView.snp.makeConstraints {
             $0.top.equalTo(filterView.snp.bottom).offset(UIHelper.Margins.large26px)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.leading.equalToSuperview()//.offset(UIHelper.Margins.medium16px)
+            $0.trailing.bottom.equalToSuperview()//.offset(-UIHelper.Margins.medium16px)
         }
     }
 }
 
+// MARK: - UICollectionViewDataSource
+extension ToDoScreenView: UICollectionViewDataSource {
 
-// MARK: - UITableViewDataSource
-
-extension ToDoScreenView: UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, 
+                        numberOfItemsInSection section: Int) -> Int {
         return viewModel?.items.count ?? 0
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let item = viewModel?.items[indexPath.row].base
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let item = viewModel?.items[indexPath.item].base
 
         if let vm = item as? ToDoCellViewModel {
-            let cell = tableView.dequeueReusableCell(for: indexPath) as ToDoTableViewCell
+            let cell = collectionView.dequeueReusableCell(for: indexPath) as ToDoCollectionViewCell
             cell.viewModel = vm
+            cell.viewModel?.output = output
             return cell
         } else {
-            return UITableViewCell()
+            return UICollectionViewCell()
         }
     }
+
+}
+
+//MARK: - UICollectionViewDelegateFlowLayout
+
+extension ToDoScreenView: UICollectionViewDelegateFlowLayout {
+
+    private var inset: CGFloat { return UIHelper.Margins.medium16px }
+
+    func collectionView(_ collectionView: UICollectionView, 
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = collectionView.bounds.width - inset * 2
+        var height: CGFloat = 112
+        return CGSize(width: width, height: height)
+    }
+    //отступы по периметру дисплея
+    func collectionView(_ collectionView: UICollectionView, 
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        insetForSectionAt section: Int) -> UIEdgeInsets {
+        UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    }
+    //spacing между рядами/строками для вертикальной коллекции
+    func collectionView(_ collectionView: UICollectionView, 
+                        layout collectionViewLayout: UICollectionViewLayout, 
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        UIHelper.Margins.medium16px
+    }
+
 }

@@ -15,22 +15,25 @@ enum UIHelper {
         //Both
         static let none: [NSAttributedString.Key: Any] = [.font: Font.none, .foregroundColor: UIColor.clear]
         
-//        static let whiteInterBold14: [NSAttributedString.Key: Any] = [.font: Font.InterBold14, .foregroundColor: Color.white]
-//        static let blueInterBold14: [NSAttributedString.Key: Any] = [.font: Font.InterBold14, .foregroundColor: Color.blue]
+        static let systemBlueInterBold18: [NSAttributedString.Key: Any] = [.font: Font.InterBold18, .foregroundColor: UIColor.systemBlue]
 
+        static let grayInterMedium16: [NSAttributedString.Key: Any] = [.font: Font.InterMedium16, .foregroundColor: Color.graySubtitleAndFilterButtons]
+
+        static let blackInterBold22: [NSAttributedString.Key: Any] = [.font: Font.InterBold22, .foregroundColor: UIColor.black]
     }
     
     enum Font {
         static let none = UIFont.systemFont(ofSize: 1, weight: .ultraLight)
         
         static let InterBold14 = UIFont(name: "Inter-Bold", size: 14) ?? UIFont.systemFont(ofSize: 14, weight: .bold)
+        static let InterMedium16 = UIFont(name: "Inter-Medium", size: 16) ?? UIFont.systemFont(ofSize: 14, weight: .medium)
         static let InterBold18 = UIFont(name: "Inter-Bold", size: 18) ?? UIFont.systemFont(ofSize: 16, weight: .bold)
-        static let InterBold20 = UIFont(name: "Inter-Bold", size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .bold)
+        static let InterBold22 = UIFont(name: "Inter-Bold", size: 22) ?? UIFont.systemFont(ofSize: 22, weight: .bold)
     }
     
     enum Color {
-        static let grayBack = UIColor(red: 0.98, green: 0.98, blue: 0.98, alpha: 1.00)
-        static let graySubtitleAndFilterButtons = UIColor(red: 0.75, green: 0.75, blue: 0.75, alpha: 1.00)
+        static let grayBack = UIColor(red: 0.94, green: 0.94, blue: 0.94, alpha: 1.00)
+        static let graySubtitleAndFilterButtons = UIColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1.00)
         static let blueBackNewTask = UIColor(red: 0.89, green: 0.92, blue: 0.98, alpha: 1.00)
         
         static let lightGrayTimeAndSeparator = UIColor(red: 0.84, green: 0.84, blue: 0.84, alpha: 1.00)

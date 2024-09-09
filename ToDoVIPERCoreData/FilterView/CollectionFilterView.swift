@@ -30,22 +30,26 @@ final class CollectionFilterView: UIView, CollectionFilterViewLogic {
 
     private lazy var backView: UIView = {
         let view = UIView()
+        view.backgroundColor = .none
         return view
     }()
 
     private(set) lazy var layout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
-//        layout.scrollDirection = .horizontal
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = 0
         return layout
     }()
 
     private(set) lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(cellType: OneFilterCell.self)
+        collectionView.register(cellType: SeparatorCell.self)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.isScrollEnabled = false
+        collectionView.backgroundColor = .none
         return collectionView
     }()
 
@@ -58,6 +62,7 @@ final class CollectionFilterView: UIView, CollectionFilterViewLogic {
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
         configure()
+        backgroundColor = .none
     }
 
     required init?(coder _: NSCoder) {
@@ -68,8 +73,7 @@ final class CollectionFilterView: UIView, CollectionFilterViewLogic {
 
     func update(viewModel: CollectionFilterViewModel) {
         self.viewModel = viewModel
-
-        backView.layer.backgroundColor = viewModel.backColor.cgColor
+        backView.layer.backgroundColor = .none
         cellWidths = viewModel.widths
 
         updateConstraints(insets: viewModel.insets)
@@ -121,7 +125,7 @@ extension CollectionFilterView: UICollectionViewDelegateFlowLayout {
         guard indexPath.item < cellWidths.count else { return CGSize.zero }
         let cellWidth = cellWidths[indexPath.item]
 
-        return CGSize(width: cellWidth, height: UIHelper.Margins.large22px)
+        return CGSize(width: cellWidth, height: UIHelper.Margins.huge36px)
     }
 }
 
@@ -143,6 +147,10 @@ extension CollectionFilterView: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(for: indexPath) as OneFilterCell
             cell.viewModel = vm
             cell.viewModel?.output = output
+            return cell
+        } else if let vm = item as? SeparatorCellViewModel {
+            let cell = collectionView.dequeueReusableCell(for: indexPath) as SeparatorCell
+            cell.viewModel = vm
             return cell
         } else {
             return UICollectionViewCell()
