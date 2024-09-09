@@ -240,7 +240,7 @@ extension ToDoScreenView: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.bounds.width - inset * 2
-        var height: CGFloat = 112
+        var height: CGFloat = 112 //TODO: count height of content and put here
         return CGSize(width: width, height: height)
     }
     //отступы по периметру дисплея
@@ -249,8 +249,8 @@ extension ToDoScreenView: UICollectionViewDelegateFlowLayout {
                         insetForSectionAt section: Int) -> UIEdgeInsets {
         UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
-    //spacing между рядами/строками для вертикальной коллекции
-    func collectionView(_ collectionView: UICollectionView, 
+    //spacing между рядами(для горзонтальной) или строками (для вертикальной) коллекции
+    func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout, 
                         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         UIHelper.Margins.medium16px

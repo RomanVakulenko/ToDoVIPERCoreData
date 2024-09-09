@@ -25,6 +25,7 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
         view.layer.cornerRadius = UIHelper.Margins.medium12px
         return view
     }()
+    //TODO: можно было бы создать еще одну backViewForUIElements - и у нее сделать отступы, чтобы DRY улучшить и не писать их в констрейнтах - но, мало времени - уже сделал так сразу.. - для рефакторинга
 
     private lazy var taskName: UILabel = {
         let view = UILabel()
@@ -86,8 +87,6 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
     // MARK: - Public methods
 
     override func update(with viewModel: ToDoCellViewModel) {
-//        backgroundColor = .none
-        contentView.backgroundColor = .none
         backView.backgroundColor = .white
         taskName.text = viewModel.taskNameText
         taskSubtitle.attributedText = viewModel.taskSubtitleText

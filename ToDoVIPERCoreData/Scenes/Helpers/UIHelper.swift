@@ -32,7 +32,7 @@ enum UIHelper {
     }
     
     enum Color {
-        static let grayBack = UIColor(red: 0.94, green: 0.94, blue: 0.94, alpha: 1.00)
+        static let grayBack = UIColor(red: 0.96, green: 0.96, blue: 0.96, alpha: 1.00)
         static let graySubtitleAndFilterButtons = UIColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1.00)
         static let blueBackNewTask = UIColor(red: 0.89, green: 0.92, blue: 0.98, alpha: 1.00)
         
