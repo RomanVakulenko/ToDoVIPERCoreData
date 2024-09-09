@@ -20,7 +20,29 @@ enum ToDoScreenFlow {
         typealias ViewModel = ToDoModel.ViewModel
     }
 
+    enum OnFilterTapped {
+
+        struct Request {
+            var filterViewModel: OneFilterCellViewModel
+        }
+
+        struct Response { }
+
+        struct ViewModel { }
+    }
+
     enum OnDidLoadViews {
+
+        struct Request {}
+
+        struct Response {
+            let taskList: TaskList
+        }
+
+        struct ViewModel {}
+    }
+
+    enum OnCheckMark{
 
         struct Request {}
 
@@ -29,9 +51,14 @@ enum ToDoScreenFlow {
         struct ViewModel {}
     }
 
-    enum OnCheckMark{
+    enum OnTextChanged{
 
-        struct Request {}
+        struct Request {
+            let taskNameText: String?
+            let taskSubtitleText: String?
+            let timeSubtitleText: String?
+            let cellId: String
+        }
 
         struct Response {}
 

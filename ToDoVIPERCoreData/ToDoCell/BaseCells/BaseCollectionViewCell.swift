@@ -30,7 +30,7 @@ open class BaseCollectionViewCell<T>: UICollectionViewCell, Reusable {
     }
 
     private func initCell() {
-        backgroundColor = .clear
+        backgroundColor = .none
 
         composeSubviews()
         setConstraints()

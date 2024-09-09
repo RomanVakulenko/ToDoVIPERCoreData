@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="TaskEntity" representedClassName=".TaskEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="completed" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="todo" optional="YES" attributeType="String"/>
+        <attribute name="userId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="taskList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TaskListEntity" inverseName="tasks" inverseEntity="TaskListEntity"/>
+    </entity>
+    <entity name="TaskListEntity" representedClassName=".TaskListEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="limit" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="skip" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="total" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="tasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaskEntity" inverseName="taskList" inverseEntity="TaskEntity"/>
+    </entity>
+</model>
