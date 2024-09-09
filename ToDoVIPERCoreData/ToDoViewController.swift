@@ -13,6 +13,7 @@ protocol ToDoViewProtocol: AnyObject {
     //    var modelWithAddedQuantity: [ToDoModel] { get set }
 
     func displayUpdate(viewModel: ToDoScreenFlow.Update.ViewModel)
+    func displayWaitIndicator(viewModel: ToDoScreenFlow.OnWaitIndicator.ViewModel)
 }
 
 
@@ -58,6 +59,10 @@ final class ToDoViewController: UIViewController, ToDoViewProtocol, NavigationBa
         contentView.update(viewModel: viewModel)
     }
 
+    func displayWaitIndicator(viewModel: ToDoScreenFlow.OnWaitIndicator.ViewModel) {
+        contentView.displayWaitIndicator(viewModel: viewModel)
+    }
+
 
     // MARK: - Private methods
     private func configure() {
@@ -69,33 +74,37 @@ final class ToDoViewController: UIViewController, ToDoViewProtocol, NavigationBa
     private func configureConstraints() { }
 }
 
-extension ToDoViewController: ToDoViewOutput {
 
+// MARK: - ToDoViewOutput
+extension ToDoViewController: ToDoViewOutput {
     func useCurrent(taskNameText: String?,
                     taskSubtitleText: String?,
                     timeSubtitleText: String?,
                     cellId: String) {
-        presenter?.changeTextInTaskFieldsAt(
-            request: ToDoScreenFlow.OnTextChanged.Request(taskNameText: taskNameText,
-                                                          taskSubtitleText: taskSubtitleText,
-                                                          timeSubtitleText: timeSubtitleText,
-                                                          cellId: cellId))
+//        presenter?.changeTextInTaskFieldsAt(
+//            request: ToDoScreenFlow.OnTextChanged.Request(taskNameText: taskNameText,
+//                                                          taskSubtitleText: taskSubtitleText,
+//                                                          timeSubtitleText: timeSubtitleText,
+//                                                          cellId: cellId))
     }
-    
+
     func didTapNewTaskButton() {
         ()
     }
-    
+
     func didTapTaskCell(_ viewModel: ToDoCellViewModel) {
         ()
     }
-    
+
     func didTapCheckMark(_ viewModel: ToDoCellViewModel) {
-        ()
-    }
-    
-    func didTapFilterCell(_ viewModel: OneFilterCellViewModel) {
-        ()
+        presenter?.didTapCheckMark(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request(id: viewModel.id))
     }
 
+    func didTapFilterCell(_ viewModel: OneFilterCellViewModel) {
+        presenter?.didTapFilter(request: ToDoScreenFlow.OnFilterTapped.Request(filterType: viewModel.typeOfFilterCell))
+    }
+
+    func didSwipeLeftToDelete(_ viewModel: ToDoCellViewModel) {
+        presenter?.didSwipeLeftToDelete(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request(id: viewModel.id))
+    }
 }

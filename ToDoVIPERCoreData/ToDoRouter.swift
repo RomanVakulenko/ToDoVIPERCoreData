@@ -16,7 +16,7 @@ final class ToDoRouter: ToDoRoutingLogic {
 
     // MARK: - Public properties
     weak var viewController: ToDoViewController?
-    weak var dataStore: ToDoPresenterDataStore?
+    weak var dataStore: ToDoInteractorDataStore?
 
     // MARK: - Public methods
     func routeToOneTaskDetailsScreen() {

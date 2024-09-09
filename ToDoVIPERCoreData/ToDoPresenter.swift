@@ -8,21 +8,22 @@
 import Foundation
 import DifferenceKit
 
-typealias ToDoPresentable = ToDoPresenterProtocol //& ToDoPresenterDataStore
+typealias ToDoPresentable = ToDoPresenterProtocol
 
 protocol ToDoPresenterProtocol: AnyObject {
     var view: ToDoViewProtocol? { get set }
     var interactor: ToDoInteractorProtocol? { get set }
     var router: ToDoRoutingLogic? { get set }
-
-    func changeTextInTaskFieldsAt(request: ToDoScreenFlow.OnTextChanged.Request)
+    func presentWaitIndicator(response: ToDoScreenFlow.OnWaitIndicator.Response)
+    
+//    func changeTextInTaskFieldsAt(request: ToDoScreenFlow.OnTextChanged.Request)
     func getData(request: ToDoScreenFlow.OnDidLoadViews.Request)
-    func presentToDoList(response: ToDoScreenFlow.OnDidLoadViews.Response)
-    func makeTransitionWith(model: DTOTask)
-}
+    func presentToDoList(response: ToDoScreenFlow.Update.Response)
 
-protocol ToDoPresenterDataStore: AnyObject {
-    var taskList: TaskList? { get }
+    func didTapFilter(request: ToDoScreenFlow.OnFilterTapped.Request)
+    func didTapCheckMark(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request)
+    func didSwipeLeftToDelete(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request)
+    func makeTransitionWith(model: DTOTask)
 }
 
 // MARK: - ToDoPresenter
@@ -31,74 +32,90 @@ final class ToDoPresenter: ToDoPresentable {
     weak var view: ToDoViewProtocol?
     var interactor: ToDoInteractorProtocol?
     var router: ToDoRoutingLogic?
-    var taskList: TaskList?
+//    var taskList: TaskList?
 
     var taskNameText: String?
     var taskSubtitleText = "Subtitle"
     var timeSubtitleText: String?
 
-    private var filterTapped = ToDoModel.FilterType.all
+    // MARK: - Public methods
 
     func getData(request: ToDoScreenFlow.OnDidLoadViews.Request) {
         interactor?.getData(request: request)
+    }
+
+    func didTapCheckMark(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request) {
+        interactor?.didTapCheckMarkWith(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request(id: request.id))
+    }
+
+
+    func didSwipeLeftToDelete(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request) {
+        interactor?.didSwipeLeftToDelete(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request(id: request.id))
+    }
+
+    func didTapFilter(request: ToDoScreenFlow.OnFilterTapped.Request) {
+        interactor?.didTapFilter(request: ToDoScreenFlow.OnFilterTapped.Request(filterType: request.filterType))
     }
 
     func makeTransitionWith(model: DTOTask) {
         router?.routeToOneTaskDetailsScreen()
     }
 
-    func changeTextInTaskFieldsAt(request: ToDoScreenFlow.OnTextChanged.Request) {
-        guard let cellId = Int(request.cellId) else { return }
+//    func changeTextInTaskFieldsAt(request: ToDoScreenFlow.OnTextChanged.Request) {
+//        guard let cellId = Int(request.cellId) else { return }
+//
+//        if let index = taskList?.tasks.firstIndex(where: { $0.id == cellId }) {
+//            taskList?.tasks[index].description = request.taskNameText ?? ""
+//            taskNameText = request.taskNameText ?? ""
+//        }
+//        taskSubtitleText = request.taskSubtitleText ?? ""
+//        timeSubtitleText = request.timeSubtitleText
+//    }
 
-        if let index = taskList?.tasks.firstIndex(where: { $0.id == cellId }) {
-            taskList?.tasks[index].description = request.taskNameText ?? ""
-            taskNameText = request.taskNameText ?? ""
-        }
-        taskSubtitleText = request.taskSubtitleText ?? ""
-        timeSubtitleText = request.timeSubtitleText
-    }
-
-    func presentToDoList(response: ToDoScreenFlow.OnDidLoadViews.Response) {
-        taskList = response.taskList
-        print("Loaded tasks: \(taskList)")
+    func presentToDoList(response: ToDoScreenFlow.Update.Response) {
+        let taskList = response.taskList
+        print(response.taskList.tasks)
 
         let backViewColor = UIHelper.Color.grayBack
 
-        let total = response.taskList.tasks.count
-        let completed = response.taskList.tasks.filter { $0.isCompleted }.count
-        let opened = total - completed
+        let total = response.totalTasks
+        let completed = response.completedTasksCount
+        let opened = total - (completed ?? 0)
 
         var views: [AnyDifferentiable] = []
 
         views.append(makeFilterView(all: total,
                                     opened: opened,
-                                    closed: completed,
-                                    selectedFilter: filterTapped))
+                                    closed: completed ?? 0,
+                                    selectedFilter: response.filterType))
 
-
-        var dictTasks: Dictionary<Int,ToDoCellViewModel> = [:]
-        var tableItems: [AnyDifferentiable] = []
 
         let group = DispatchGroup()
         var lock = os_unfair_lock_s()
-        
-        for (index, task) in response.taskList.tasks.enumerated() {
+
+        var tableItems: [AnyDifferentiable] = []
+        var dictTasks: Dictionary<Int,ToDoCellViewModel> = [:]
+
+        let sortedTasks = taskList.tasks.sorted { $0.id < $1.id }
+
+        for (index, task) in sortedTasks.enumerated() {
             group.enter()
+
             makeOneTaskCell(task: task,
-                            index: task.id) { (toDoCellViewModel, index) in
+                            id: task.id) { (toDoCellViewModel, id) in
                 os_unfair_lock_lock(&lock)
-                dictTasks[index] = toDoCellViewModel //чтобы одновременного обращения к словарю не было
+                dictTasks[id] = toDoCellViewModel //чтобы одновременного обращения к словарю не было
                 os_unfair_lock_unlock(&lock)
                 group.leave()
             }
-
         }
 
         group.notify(queue: DispatchQueue.global()) {[weak self] in
             guard let self = self else { return }
 
-            for index in 0..<dictTasks.count {
-                if let taskCellVM = dictTasks[index] {
+            let sortedDictKeys = Array(dictTasks.keys).sorted()
+            for key in sortedDictKeys {
+                if let taskCellVM = dictTasks[key] {
                     tableItems.append(AnyDifferentiable(taskCellVM))
                 }
             }
@@ -130,6 +147,15 @@ final class ToDoPresenter: ToDoPresentable {
         }
     }
 
+    func presentWaitIndicator(response: ToDoScreenFlow.OnWaitIndicator.Response) {
+        DispatchQueue.main.async { [weak self] in
+            self?.view?.displayWaitIndicator(viewModel: ToDoScreenFlow.OnWaitIndicator.ViewModel(isShow: response.isShow))
+        }
+    }
+
+
+    // MARK: - Private methods
+
     private func makeAddNewTaskButton() -> NSMutableAttributedString {
         let attachment = NSTextAttachment()
         if let plusImage = UIImage(systemName: "plus")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal) {
@@ -153,25 +179,32 @@ final class ToDoPresenter: ToDoPresentable {
 
 
     private func makeOneTaskCell(task: Task,
-                                 index: Int,
+                                 id: Int,
                                  completion: @escaping (ToDoCellViewModel, Int) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
 
             var checkMarkImage = UIImage()
+            var taskNameText = NSAttributedString()
+
             if task.isCompleted {
                 checkMarkImage = UIImage.init(systemName: "checkmark.circle.fill") ?? UIImage()
+                taskNameText = NSAttributedString(string: task.description,
+                                                  attributes: UIHelper.Attributed.systemBlueInterBold18StrikedBlack)
             } else {
-                checkMarkImage = UIImage.init(systemName: "circle") ?? UIImage()
+                checkMarkImage = UIImage(systemName: "circle") ?? UIImage()
+                taskNameText = NSAttributedString(string: task.description,
+                                                  attributes: UIHelper.Attributed.systemBlueInterBold18Black)
             }
 
             let separatorColor = UIHelper.Color.lightGrayTimeAndSeparator
+
             let taskSubtitle = NSAttributedString(
                 string: "Task subtitle",
                 attributes: UIHelper.Attributed.grayInterMedium16)
-            let oneTaskCell = ToDoCellViewModel(id: String(task.id),
+            let oneTaskCell = ToDoCellViewModel(id: String(id),
                                                 backColor:  UIColor.white,
-                                                taskNameText: task.description,
+                                                taskNameText: taskNameText,
                                                 taskSubtitleText: taskSubtitle,
                                                 checkMarkImage: checkMarkImage,
                                                 separatorColor: separatorColor,
@@ -182,7 +215,7 @@ final class ToDoPresenter: ToDoPresentable {
                                                                      bottom: 0,
                                                                      right: 0))
 
-            completion(oneTaskCell, index)
+            completion(oneTaskCell, id)
         }
     }
 
@@ -192,39 +225,53 @@ final class ToDoPresenter: ToDoPresentable {
                                 closed: Int,
                                 selectedFilter: ToDoModel.FilterType) -> AnyDifferentiable {
 
-        let filterTitles: [String] = ["All", "Open", "Closed"]
-        var isFilterSelected: [Bool] = [false, false, false] // Массив для отслеживания выбранных фильтров
-
+        let filterTitles: [String] = ["All", "Opened", "Closed"]
+        var isFilterSelected: [Bool] = [false, false, false]
+        
         switch selectedFilter {
-        case .all:
-            isFilterSelected = [true, false, false]
-        case .opened:
-            isFilterSelected = [false, true, false]
-        case .closed:
-            isFilterSelected = [false, false, true]
+           case .all:
+               isFilterSelected[0] = true
+           case .opened:
+               isFilterSelected[1] = true
+           case .closed:
+               isFilterSelected[2] = true
         }
 
         var filterItems: [AnyDifferentiable] = []
         var widthsOfFilterCells = [CGFloat]()
 
         for (id, title) in filterTitles.enumerated() {
-            let oneFilterTitleColor = isFilterSelected[id] ? UIColor.systemBlue : UIHelper.Color.graySubtitleAndFilterButtons
-            let filterCounterBackColor = isFilterSelected[id] ? UIColor.systemBlue : UIHelper.Color.graySubtitleAndFilterButtons
+            let isSelected = isFilterSelected[id]
+            let oneFilterTitleColor = isSelected ? UIColor.systemBlue : UIHelper.Color.graySubtitleAndFilterButtons
+            let filterCounterBackColor = isSelected ? UIColor.systemBlue : UIHelper.Color.graySubtitleAndFilterButtons
 
-            let filterCounterText = id == 0 ? String(all) : id == 1 ? String(opened) : String(closed)
+            let filterCounterText: String
+            var typeOfFilterCell = ToDoModel.FilterType.all
 
-            let oneFilter = makeFilterVM(id: id,
-                                         oneFilterTitle: title,
-                                         oneFilterTitleColor: oneFilterTitleColor,
-                                         filterCounterBackColor: filterCounterBackColor,
-                                         filterCounterText: filterCounterText)
+            switch id {
+            case 0: 
+                filterCounterText = String(all)
+            case 1: 
+                filterCounterText = String(opened)
+                typeOfFilterCell = .opened
+            case 2:
+                filterCounterText = String(closed)
+                typeOfFilterCell = .closed
+            default: filterCounterText = ""
+            }
 
-            widthsOfFilterCells.append(oneFilter.1)
-            filterItems.append(oneFilter.0)
+            let (filterVM, width) = makeOneFilterCell(id: id,
+                                                      typeOfFilterCell: typeOfFilterCell,
+                                                      oneFilterTitle: title,
+                                                      oneFilterTitleColor: oneFilterTitleColor,
+                                                      filterCounterBackColor: filterCounterBackColor,
+                                                      filterCounterText: filterCounterText)
+            widthsOfFilterCells.append(width)
+            filterItems.append(filterVM)
         }
 
         let separatorCell = AnyDifferentiable(SeparatorCellViewModel(id: "11",
-                                                                     separatorColor:  UIHelper.Color.lightGrayTimeAndSeparator,
+                                                                     separatorColor:  UIHelper.Color.graySubtitleAndFilterButtons,
                                                                      separatorBorderWidth: CGFloat(1),
                                                                      insets: UIEdgeInsets(top: 8, left: 0, bottom: 4, right: 0)))
         let separatorWidth: CGFloat = 1
@@ -239,18 +286,20 @@ final class ToDoPresenter: ToDoPresentable {
         return (AnyDifferentiable(filterView))
     }
 
-    private func makeFilterVM(id: Int,
-                              oneFilterTitle: String,
-                              oneFilterTitleColor: UIColor,
-                              filterCounterBackColor: UIColor,
-                              filterCounterText: String) -> (AnyDifferentiable, CGFloat)  {
+    private func makeOneFilterCell(id: Int,
+                                   typeOfFilterCell: ToDoModel.FilterType,
+                                   oneFilterTitle: String,
+                                   oneFilterTitleColor: UIColor,
+                                   filterCounterBackColor: UIColor,
+                                   filterCounterText: String) -> (AnyDifferentiable, CGFloat)  {
 
         var oneFilterWidht = CGFloat()
-        let textLenght = CGFloat(oneFilterTitle.size().width) + CGFloat(filterCounterText.size().width)
+        let textLenght = CGFloat(oneFilterTitle.size().width) + CGFloat(filterCounterText.size().width) + 6
         oneFilterWidht = UIHelper.Margins.large20px + textLenght + UIHelper.Margins.large20px
 
         let oneFilterVM = OneFilterCellViewModel(
             id: String(id),
+            typeOfFilterCell: typeOfFilterCell,
             oneFilterTitle: oneFilterTitle,
             oneFilterTitleColor: oneFilterTitleColor,
             filterCounterBackColor: filterCounterBackColor,

@@ -22,7 +22,10 @@ final class CoreDataService: LocalStorageServiceProtocol {
 
     static let shared: LocalStorageServiceProtocol = CoreDataService()
     private init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(saveContext), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, 
+                                               selector: #selector(saveContext),
+                                               name: UIApplication.didEnterBackgroundNotification,
+                                               object: nil)
     }
 
     var persistentContainer: NSPersistentContainer = {

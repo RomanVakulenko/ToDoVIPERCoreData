@@ -28,12 +28,8 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
 
     private lazy var taskName: UILabel = {
         let view = UILabel()
-        view.textColor = UIColor.black
-        view.font = UIFont(name: "SFUIDisplay-Bold", size: 18)
-        view.font = UIFont.boldSystemFont(ofSize: 18)
         view.numberOfLines = 1
         view.lineBreakMode = .byTruncatingTail
-//        view.delegate = self
         return view
     }()
 
@@ -44,7 +40,6 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
         view.font = UIFont.boldSystemFont(ofSize: 14)
         view.numberOfLines = 1
         view.lineBreakMode = .byTruncatingTail
-//        view.delegate = self
         return view
     }()
 
@@ -77,7 +72,7 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
         view.textColor = UIHelper.Color.lightGrayTimeAndSeparator
         view.font = UIFont(name: "SFUIDisplay-Bold", size: 14)
         view.font = UIFont.boldSystemFont(ofSize: 14)
-//        view.delegate = self
+        view.lineBreakMode = .byTruncatingTail
         return view
     }()
 
@@ -86,10 +81,9 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
     // MARK: - Public methods
 
     override func update(with viewModel: ToDoCellViewModel) {
-//        backgroundColor = .none
         contentView.backgroundColor = .none
         backView.backgroundColor = .white
-        taskName.text = viewModel.taskNameText
+        taskName.attributedText = viewModel.taskNameText
         taskSubtitle.attributedText = viewModel.taskSubtitleText
         checkMarkImageView.image = viewModel.checkMarkImage
         separatorView.backgroundColor = viewModel.separatorColor
@@ -109,6 +103,11 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapAtCell(_:)))
         backView.isUserInteractionEnabled = true
         backView.addGestureRecognizer(tapGestureRecognizer)
+
+        // Свайп для удаления
+        let swipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        swipeGestureRecognizer.direction = .left
+        backView.addGestureRecognizer(swipeGestureRecognizer)
     }
 
     override func setConstraints() {
@@ -118,8 +117,7 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
 
         taskName.snp.makeConstraints {
             $0.top.leading.equalToSuperview().offset(UIHelper.Margins.medium16px)
-            $0.trailing.equalToSuperview().offset(-UIHelper.Margins.huge40px)
-//            $0.height.equalTo(UIHelper.Margins.large20px)
+            $0.trailing.equalToSuperview().offset(-UIHelper.Margins.huge42px)
         }
         taskName.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
@@ -127,7 +125,6 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
             $0.top.equalTo(taskName.snp.bottom).offset(UIHelper.Margins.small4px)
             $0.leading.equalTo(taskName.snp.leading)
             $0.trailing.equalToSuperview().offset(-UIHelper.Margins.huge40px)
-//            $0.height.equalTo(UIHelper.Margins.medium16px)
         }
         taskSubtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
@@ -147,14 +144,13 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
         todaySubtitle.snp.makeConstraints {
             $0.top.equalTo(separatorView.snp.bottom).offset(UIHelper.Margins.medium12px)
             $0.leading.equalToSuperview().offset(UIHelper.Margins.medium16px)
-//            $0.height.equalTo(UIHelper.Margins.medium16px)
         }
 
         timeSubtitle.snp.makeConstraints {
             $0.top.equalTo(todaySubtitle)
             $0.leading.equalTo(todaySubtitle).offset(UIHelper.Margins.small4px)
-//            $0.height.equalTo(UIHelper.Margins.medium16px)
         }
+        timeSubtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     }
 
 
@@ -171,6 +167,11 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
     }
 
     // MARK: - Actions
+
+    @objc private func handleSwipe(_ gesture: UISwipeGestureRecognizer) {
+        viewModel?.didSwipeLeftToDelete()
+    }
+
     @objc func checkMarkTapped(_ sender: UITapGestureRecognizer) {
         viewModel?.didTapCheckView()
     }

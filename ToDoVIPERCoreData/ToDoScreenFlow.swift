@@ -11,10 +11,15 @@ enum ToDoScreenFlow {
 
     enum Update {
 
-        struct Request {}
+        struct Request {
+            var filterType: ToDoModel.FilterType
+        }
 
         struct Response {
-            let isCheckMarkTapped: Bool
+            let taskList: TaskList
+            let totalTasks: Int
+            let completedTasksCount: Int?
+            let filterType: ToDoModel.FilterType
         }
 
         typealias ViewModel = ToDoModel.ViewModel
@@ -23,7 +28,7 @@ enum ToDoScreenFlow {
     enum OnFilterTapped {
 
         struct Request {
-            var filterViewModel: OneFilterCellViewModel
+            let filterType: ToDoModel.FilterType
         }
 
         struct Response { }
@@ -42,9 +47,11 @@ enum ToDoScreenFlow {
         struct ViewModel {}
     }
 
-    enum OnCheckMark{
+    enum OnCheckMarkOrSwipe {
 
-        struct Request {}
+        struct Request {
+            let id: String
+        }
 
         struct Response {}
 

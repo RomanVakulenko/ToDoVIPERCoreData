@@ -17,6 +17,7 @@ protocol OneFilterCellViewModelOutput: AnyObject {
 struct OneFilterCellViewModel {
 
     let id: String
+    let typeOfFilterCell: ToDoModel.FilterType
     let oneFilterTitle: String
     let oneFilterTitleColor: UIColor
     let filterCounterBackColor: UIColor
@@ -25,8 +26,9 @@ struct OneFilterCellViewModel {
 
     weak var output: OneFilterCellViewModelOutput?
 
-    init(id: String, oneFilterTitle: String, oneFilterTitleColor: UIColor, filterCounterBackColor: UIColor, filterCounterText: String, insets: UIEdgeInsets, output: OneFilterCellViewModelOutput? = nil) {
+    init(id: String, typeOfFilterCell: ToDoModel.FilterType, oneFilterTitle: String, oneFilterTitleColor: UIColor, filterCounterBackColor: UIColor, filterCounterText: String, insets: UIEdgeInsets, output: OneFilterCellViewModelOutput? = nil) {
         self.id = id
+        self.typeOfFilterCell = typeOfFilterCell
         self.oneFilterTitle = oneFilterTitle
         self.oneFilterTitleColor = oneFilterTitleColor
         self.filterCounterBackColor = filterCounterBackColor
@@ -50,6 +52,7 @@ extension OneFilterCellViewModel: Differentiable {
 
     func isContentEqual(to source: OneFilterCellViewModel) -> Bool {
         source.oneFilterTitle == oneFilterTitle &&
+        source.typeOfFilterCell == typeOfFilterCell &&
         source.oneFilterTitleColor == oneFilterTitleColor &&
         source.filterCounterBackColor == filterCounterBackColor &&
         source.filterCounterText == filterCounterText
