@@ -15,8 +15,10 @@ enum ToDoModel {
         case cantFetchData
     }
 
-    enum FilterType {
-        case all, opened, closed
+    enum FilterType: String {
+        case all = "All"
+        case opened = "Opened"
+        case closed = "Closed"
     }
 
     struct ViewModel {
@@ -53,7 +55,7 @@ struct DTOTask: Decodable {
 struct Task {
     let id: Int
     var description: String
-    let isCompleted: Bool
+    var isCompleted: Bool
     let userId: Int
 
     // Инициализатор из DTO

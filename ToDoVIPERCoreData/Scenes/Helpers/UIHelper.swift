@@ -20,6 +20,15 @@ enum UIHelper {
         static let grayInterMedium16: [NSAttributedString.Key: Any] = [.font: Font.InterMedium16, .foregroundColor: Color.graySubtitleAndFilterButtons]
 
         static let blackInterBold22: [NSAttributedString.Key: Any] = [.font: Font.InterBold22, .foregroundColor: UIColor.black]
+
+        static let systemBlueInterBold18StrikedBlack: [NSAttributedString.Key: Any] = [
+            .font: Font.InterBold18,
+            .foregroundColor: UIColor.black,
+            .strikethroughStyle: NSUnderlineStyle.single.rawValue]
+
+        static let systemBlueInterBold18Black: [NSAttributedString.Key: Any] = [
+            .font: Font.InterBold18,
+            .foregroundColor: UIColor.black]
     }
     
     enum Font {

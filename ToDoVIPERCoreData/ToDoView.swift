@@ -79,10 +79,9 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
     private(set) lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(cellType: ToDoCollectionViewCell.self)
-//        collectionView.isUserInteractionEnabled = true
+        collectionView.backgroundColor = .none
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = .none
         collectionView.isScrollEnabled = true
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
@@ -110,15 +109,15 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
 
     func update(viewModel: ToDoModel.ViewModel) {
         self.viewModel = viewModel
-        backgroundColor = viewModel.backViewColor
-        backView.backgroundColor = viewModel.backViewColor
 
-        screenTitle.attributedText = viewModel.screenTitle
-        subtitle.attributedText = viewModel.subtitle
-
-        if newTaskButton.backgroundColor != viewModel.newTaskButtonTitle {
+        if newTaskButton.titleLabel?.text != viewModel.newTaskButtonTitle.string {
             newTaskButton.setAttributedTitle(viewModel.newTaskButtonTitle, for: .normal)
             newTaskButton.backgroundColor = viewModel.newTaskButtonBackColor
+
+            backgroundColor = viewModel.backViewColor
+            backView.backgroundColor = viewModel.backViewColor
+            screenTitle.attributedText = viewModel.screenTitle
+            subtitle.attributedText = viewModel.subtitle
         }
 
         for (i, _) in viewModel.views.enumerated() {
@@ -200,8 +199,8 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
 
         collectionView.snp.makeConstraints {
             $0.top.equalTo(filterView.snp.bottom).offset(UIHelper.Margins.large26px)
-            $0.leading.equalToSuperview()//.offset(UIHelper.Margins.medium16px)
-            $0.trailing.bottom.equalToSuperview()//.offset(-UIHelper.Margins.medium16px)
+            $0.leading.equalToSuperview()
+            $0.trailing.bottom.equalToSuperview()
         }
     }
 }

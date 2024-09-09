@@ -10,6 +10,7 @@ import UIKit
 
 protocol LocalStorageManagerProtocol {
     func fetchToDos(completion: @escaping (Result<TaskList, Error>) -> Void)
+    func isContextEmpty(completion: @escaping (Bool) -> Void)
     func saveToDos(_ tasks: TaskList, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
@@ -27,6 +28,7 @@ final class StorageDataManager: LocalStorageManagerProtocol {
 
 
     // MARK: - Public methods
+
     // конвертирует ее в бизнес-модель
     func fetchToDos(completion: @escaping (Result<TaskList, Error>) -> Void) {
         let fetchRequest: NSFetchRequest<TaskListEntity> = TaskListEntity.fetchRequest()
@@ -67,9 +69,28 @@ final class StorageDataManager: LocalStorageManagerProtocol {
         }
     }
 
+    func isContextEmpty(completion: @escaping (Bool) -> Void) {
+        let fetchRequest: NSFetchRequest<TaskListEntity> = TaskListEntity.fetchRequest()
+        fetchRequest.fetchLimit = 1
+
+        DispatchQueue.global().async {
+            do {
+                let count = try self.context.count(for: fetchRequest)
+                let isEmpty = count == 0
+                DispatchQueue.main.async {
+                    completion(isEmpty)
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(false)
+                }
+            }
+        }
+    }
+
     func saveToDos(_ tasks: TaskList, completion: @escaping (Result<Void, Error>) -> Void) {
         let backgroundContext = persistentContainer.newBackgroundContext() //system concurrent queue
-
+        print("updated tasks - \(String(describing: tasks.tasks.first))")
         backgroundContext.perform {
             do {
                 // Удаляем старые

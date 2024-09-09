@@ -9,6 +9,7 @@
 protocol ToDoStorageWorkerProtocol {
     func fetchToDosFromDataBase(completion: @escaping (Result<TaskList, Error>) -> Void)
     func saveToDos(_ tasks: TaskList, completion: @escaping (Result<Void, Error>) -> Void)
+    func isDBEmpty(completion: @escaping (Bool) -> Void)
 }
 
 
@@ -23,8 +24,14 @@ final class ToDoStorageWorker: ToDoStorageWorkerProtocol {
     }
 
     // MARK: - Public methods
-    func fetchToDosFromDataBase(completion: @escaping (Result<TaskList, Error>) -> Void) {
 
+    func isDBEmpty(completion: @escaping (Bool) -> Void) {
+        coreDataManager.isContextEmpty { isEmpty in
+                completion(isEmpty)
+        }
+    }
+
+    func fetchToDosFromDataBase(completion: @escaping (Result<TaskList, Error>) -> Void) {
         coreDataManager.fetchToDos { [weak self] result in
             switch result {
             case .success(let taskList):
@@ -37,7 +44,6 @@ final class ToDoStorageWorker: ToDoStorageWorkerProtocol {
     }
 
     func saveToDos(_ tasks: TaskList, completion: @escaping (Result<Void, Error>) -> Void) {
-
         coreDataManager.saveToDos(tasks) { [weak self] result in
             switch result {
             case .success(_):
