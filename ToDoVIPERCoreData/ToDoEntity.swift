@@ -45,16 +45,18 @@ struct DTOTaskList: Decodable {
 struct DTOTask: Decodable {
     let id: Int
     let todo: String
+    let subTitle: String?
+    let timeForToDo: String?
     let completed: Bool
     let userId: Int
 }
-
-
 
 // Бизнес-модель одной задачи
 struct Task {
     let id: Int
     var description: String
+    var subTitle: String?
+    var timeForToDo: String?
     var isCompleted: Bool
     let userId: Int
 
@@ -62,12 +64,13 @@ struct Task {
     init(from dto: DTOTask) {
         self.id = dto.id
         self.description = dto.todo
+        self.subTitle = dto.subTitle
+        self.timeForToDo = dto.timeForToDo
         self.isCompleted = dto.completed
         self.userId = dto.userId
     }
 }
 #warning("не понятно, что за свойства skip, userId: Int - в условии?")
-#warning("не понятно, куда записывать Subtitle task'a, время выполнения - на UI он есть - в данных из сети нет таких полей")
 // Бизнес-модель списка задач
 struct TaskList {
     var tasks: [Task]
@@ -75,7 +78,7 @@ struct TaskList {
     let skip: Int
     let limit: Int
 
-    // Инициализатор для сети из DTO
+    // Инициализатор из DTO
     init(from dto: DTOTaskList) {
         self.tasks = dto.todos.map { Task(from: $0) }
         self.total = dto.total

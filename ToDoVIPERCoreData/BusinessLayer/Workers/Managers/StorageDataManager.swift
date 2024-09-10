@@ -17,115 +17,51 @@ protocol LocalStorageManagerProtocol {
 
 final class StorageDataManager: LocalStorageManagerProtocol {
     static let shared = StorageDataManager()
+    private var localStorageService: LocalStorageServiceProtocol = CoreDataService.shared
 
-    // MARK: - Private properties
-    private var persistentContainer: NSPersistentContainer {
-        return CoreDataService.shared.persistentContainer
-    }
-    private var context: NSManagedObjectContext {
-        return persistentContainer.viewContext
-    }
-
-
-    // MARK: - Public methods
-
-    // конвертирует ее в бизнес-модель
     func fetchToDos(completion: @escaping (Result<TaskList, Error>) -> Void) {
-        let fetchRequest: NSFetchRequest<TaskListEntity> = TaskListEntity.fetchRequest()
-
-        DispatchQueue.global().async {
-            do {
-                let taskListEntities = try self.context.fetch(fetchRequest)
-
-                guard let taskListEntity = taskListEntities.first else {
-                    DispatchQueue.main.async {
-                        completion(.failure(NSError(domain: "StorageDataManagerError", code: 404, userInfo: [NSLocalizedDescriptionKey: "No TaskListEntity found"])))
-                    }
-                    return
+        localStorageService.fetchTasks { result in
+            switch result {
+            case .success(let dtoTaskList):
+                let tasks = dtoTaskList.todos.map { 
+                    Task(from: DTOTask(id: Int($0.id),
+                                       todo: $0.todo ?? "",
+                                       subTitle: $0.subTitle ?? "",
+                                       timeForToDo: $0.timeForToDo ?? "",
+                                       completed: $0.completed,
+                                       userId: Int($0.userId)))
                 }
-
-                guard let todos = taskListEntity.tasks as? Set<TaskEntity> else {
-                    DispatchQueue.main.async {
-                        completion(.failure(NSError(domain: "StorageDataManagerError", code: 500, userInfo: [NSLocalizedDescriptionKey: "Failed to cast tasks"])))
-                    }
-                    return
-                }
-                let taskArray = todos.map { Task(from: DTOTask(id: Int($0.id),
-                                                                todo: $0.todo ?? "",
-                                                                completed: $0.completed,
-                                                                userId: Int($0.userId))) }
-                let taskList = TaskList(tasks: taskArray, 
-                                        total: taskArray.count,
-                                        skip: Int(taskListEntity.skip),
-                                        limit: Int(taskListEntity.limit))
-                DispatchQueue.main.async {
-                    completion(.success(taskList))
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    completion(.failure(error))
-                }
+                let taskList = TaskList(tasks: tasks,
+                                        total: dtoTaskList.total,
+                                        skip: dtoTaskList.skip,
+                                        limit: dtoTaskList.limit)
+                completion(.success(taskList))
+            case .failure(let error):
+                completion(.failure(error))
             }
         }
     }
+
 
     func isContextEmpty(completion: @escaping (Bool) -> Void) {
-        let fetchRequest: NSFetchRequest<TaskListEntity> = TaskListEntity.fetchRequest()
-        fetchRequest.fetchLimit = 1
-
-        DispatchQueue.global().async {
-            do {
-                let count = try self.context.count(for: fetchRequest)
-                let isEmpty = count == 0
-                DispatchQueue.main.async {
-                    completion(isEmpty)
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    completion(false)
-                }
-            }
+        localStorageService.isContextEmpty { isEmpty in
+            completion(isEmpty)
         }
     }
 
+
     func saveToDos(_ tasks: TaskList, completion: @escaping (Result<Void, Error>) -> Void) {
-        let backgroundContext = persistentContainer.newBackgroundContext() //system concurrent queue
-        print("updated tasks - \(String(describing: tasks.tasks.first))")
-        backgroundContext.perform {
-            do {
-                // Удаляем старые
-                let fetchRequest: NSFetchRequest<TaskListEntity> = TaskListEntity.fetchRequest()
-                let existingTaskLists = try backgroundContext.fetch(fetchRequest)
-                for taskList in existingTaskLists {
-                    backgroundContext.delete(taskList)
-                }
-                // Сохраняем новые
-                let taskListEntity = TaskListEntity(context: backgroundContext)
-                taskListEntity.skip = Int64(tasks.skip)
-                taskListEntity.limit = Int64(tasks.limit)
-                taskListEntity.total = Int64(tasks.total)
+        let dtoTaskList = DTOTaskList(todos: tasks.tasks.map { task in
+            DTOTask(id: task.id,
+                    todo: task.description,
+                    subTitle: task.subTitle,
+                    timeForToDo: task.timeForToDo,
+                    completed: task.isCompleted,
+                    userId: task.userId)
+        }, total: tasks.total, skip: tasks.skip, limit: tasks.limit)
 
-                for task in tasks.tasks {
-                    let taskEntity = TaskEntity(context: backgroundContext)
-                    taskEntity.id = Int64(task.id)
-                    taskEntity.todo = task.description
-                    taskEntity.completed = task.isCompleted
-                    taskEntity.userId = Int64(task.userId)
-                    taskListEntity.addToTasks(taskEntity)
-                }
-
-                try backgroundContext.save()
-                DispatchQueue.main.async {
-                    completion(.success(()))
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    completion(.failure(error))
-                }
-            }
+        localStorageService.saveTasks(dtoTaskList) { result in
+            completion(result)
         }
     }
 }
-
-
-
