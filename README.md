@@ -5,7 +5,7 @@
 - saves to NSPersistentContainer (CoreData),
 - displays
 - left swipe to delete task
-- filter tasks
+- filtering tasks
 - marking done/notDone
 - editing text fields
 
