@@ -63,8 +63,8 @@ final class CoreDataService: LocalStorageServiceProtocol {
             let tasks = (taskListEntity.tasks?.allObjects as? [TaskEntity] ?? []).map {
                 DTOTask(id: Int($0.id),
                         todo: $0.todo ?? "",
-                        subTitle: $0.subtitle ?? "",
-                        timeForToDo: $0.timeForToDo ?? "",
+                        subTitle: $0.subtitle ?? "Task subtitle",
+                        timeForToDo: $0.timeForToDo ?? "введи",
                         completed: $0.completed,
                         userId: Int($0.userId))
             }.sorted { $0.id < $1.id }
