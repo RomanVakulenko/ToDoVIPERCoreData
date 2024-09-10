@@ -9,12 +9,7 @@ import UIKit
 import SnapKit
 
 
-protocol ToDoTableViewCellViewOutput: AnyObject {
-    func useCurrent(taskNameText: String?,
-                    taskSubtitleText: String?,
-                    timeSubtitleText: String?,
-                    cellId: String)
-}
+protocol ToDoTableViewCellViewOutput: AnyObject { }
 
 final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
 
@@ -26,20 +21,25 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
         return view
     }()
 
-    private lazy var taskName: UILabel = {
-        let view = UILabel()
-        view.numberOfLines = 1
-        view.lineBreakMode = .byTruncatingTail
+    private lazy var taskName: UITextView = {
+        let view = UITextView()
+        view.isScrollEnabled = false
+        view.textContainer.maximumNumberOfLines = 1
+        view.textContainer.lineBreakMode = .byTruncatingTail
+        view.textContainerInset = .zero
+        view.textAlignment = .left
+        view.delegate = self
         return view
     }()
 
-    private lazy var taskSubtitle: UILabel = {
-        let view = UILabel()
-        view.textColor = UIHelper.Color.graySubtitleAndFilterButtons
-        view.font = UIFont(name: "SFUIDisplay-Bold", size: 14)
-        view.font = UIFont.boldSystemFont(ofSize: 14)
-        view.numberOfLines = 1
-        view.lineBreakMode = .byTruncatingTail
+    private lazy var taskSubtitle: UITextView = {
+        let view = UITextView()
+        view.isScrollEnabled = false
+        view.textContainer.maximumNumberOfLines = 1
+        view.textContainer.lineBreakMode = .byTruncatingTail
+        view.textContainerInset = .zero
+        view.textAlignment = .left
+        view.delegate = self
         return view
     }()
 
@@ -58,7 +58,7 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
 
         return line
     }()
-    #warning("не понятно куда сохранять время выполнения и как хотели бы, чтобы выбирался диапазон выполнения, потому вписал хардом в презентере - чтобы на UI было ")
+    #warning("не понятно как хотели бы, чтобы выбирался диапазон выполнения, потому вписал хардом в презентере - чтобы на UI было ")
     private lazy var todaySubtitle: UILabel = {
         let view = UILabel()
         view.textColor = UIHelper.Color.graySubtitleAndFilterButtons
@@ -67,12 +67,17 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
         return view
     }()
 
-    private lazy var timeSubtitle: UILabel = {
-        let view = UILabel()
-        view.textColor = UIHelper.Color.lightGrayTimeAndSeparator
+    private lazy var timeSubtitle: UITextView = {
+        let view = UITextView()
+        view.isScrollEnabled = false
+        view.textContainer.maximumNumberOfLines = 1
+        view.textColor = UIHelper.Color.graySubtitleAndFilterButtons
         view.font = UIFont(name: "SFUIDisplay-Bold", size: 14)
         view.font = UIFont.boldSystemFont(ofSize: 14)
-        view.lineBreakMode = .byTruncatingTail
+        view.textContainer.lineBreakMode = .byTruncatingTail
+        view.textContainerInset = .zero
+        view.textAlignment = .left
+        view.delegate = self
         return view
     }()
 
@@ -130,7 +135,7 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
 
         separatorView.snp.makeConstraints {
             $0.top.equalTo(taskSubtitle.snp.bottom).offset(UIHelper.Margins.medium12px)
-            $0.leading.equalToSuperview().offset(UIHelper.Margins.medium16px)
+            $0.leading.equalToSuperview().offset(UIHelper.Margins.large20px)
             $0.trailing.equalToSuperview().offset(-UIHelper.Margins.medium16px)
             $0.height.equalTo(UIHelper.Margins.small1px)
         }
@@ -143,12 +148,12 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
 
         todaySubtitle.snp.makeConstraints {
             $0.top.equalTo(separatorView.snp.bottom).offset(UIHelper.Margins.medium12px)
-            $0.leading.equalToSuperview().offset(UIHelper.Margins.medium16px)
+            $0.leading.equalToSuperview().offset(UIHelper.Margins.large20px)
         }
 
         timeSubtitle.snp.makeConstraints {
             $0.top.equalTo(todaySubtitle)
-            $0.leading.equalTo(todaySubtitle).offset(UIHelper.Margins.small4px)
+            $0.leading.equalTo(todaySubtitle.snp.trailing).offset(UIHelper.Margins.small4px)
         }
         timeSubtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     }
@@ -182,49 +187,37 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
 
 }
 
-//extension ToDoTableViewCell: UITextFieldDelegate {
-//
-//    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-//        guard let currentText = textField.text as NSString? else { return true }
-//
-//        guard let cursorPosition = textField.selectedTextRange else { return true }
-//        let updatedText = currentText.replacingCharacters(in: range, with: string)
-//
-//        // Устанавливаем текст в зависимости от текстового поля
-//        if textField == self.taskName {
-//            self.taskName.text = updatedText.lowercased()
-//        } else if textField == self.taskSubtitle {
-//            self.taskSubtitle.text = updatedText.lowercased()
-//        } else if textField == self.timeSubtitle {
-//            self.timeSubtitle.text = updatedText
-//        }
-//
-//        output?.useCurrent(
-//            taskNameText: self.taskName.text,
-//            taskSubtitleText: self.taskSubtitle.text,
-//            timeSubtitleText: self.timeSubtitle.text, 
-//            cellId: self.viewModel?.id ?? "")
-//
-//        // Вычисляем новое положение курсора
-//        let currentCursorPosition = textField.offset(from: textField.beginningOfDocument, to: cursorPosition.start)
-//        let newCursorPosition: Int
-//
-//        if string.isEmpty { // Если удаляем символ
-//            newCursorPosition = max(currentCursorPosition - 1, 0)
-//        } else { // Если вводим символ
-//            newCursorPosition = currentCursorPosition + string.count
-//        }
-//
-//        // Устанавливаем новое положение курсора
-//        if let newPosition = textField.position(from: textField.beginningOfDocument, offset: newCursorPosition) {
-//            textField.selectedTextRange = textField.textRange(from: newPosition, to: newPosition)
-//        }
-//
-//        return false
-//    }
-//
-//    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-//        textField.resignFirstResponder()
-//        return true
-//    }
-//}
+// MARK: - UITextViewDelegate
+extension ToDoCollectionViewCell: UITextViewDelegate {
+
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        guard let currentText = textView.text as NSString? else { return true }
+
+        // Первая заглавная
+        let isFirstCharacter = range.location == 0
+        let transformedText = isFirstCharacter ? text.capitalized : text.lowercased()
+
+        let updatedText = currentText.replacingCharacters(in: range, with: transformedText)
+
+        if textView == self.taskName {
+            self.taskName.text = updatedText
+        } else if textView == self.taskSubtitle {
+            self.taskSubtitle.text = updatedText
+        } else if textView == self.timeSubtitle {
+            self.timeSubtitle.text = updatedText
+        }
+
+        viewModel?.onChangeText(
+            taskNameText: self.taskName.text,
+            taskSubtitleText: self.taskSubtitle.text,
+            timeSubtitleText: self.timeSubtitle.text ?? "")
+
+        return false
+    }
+
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        textView.resignFirstResponder()
+    }
+}
+

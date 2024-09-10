@@ -13,8 +13,7 @@ import UIKit
 protocol LocalStorageServiceProtocol {
     func fetchTasks(completion: @escaping (Result<DTOTaskList, Error>) -> Void)
     func saveTasks(_ tasks: DTOTaskList, completion: @escaping (Result<Void, Error>) -> Void)
-
-    var persistentContainer: NSPersistentContainer { get set }
+    func isContextEmpty(completion: @escaping (Bool) -> Void)
 }
 
 
@@ -22,7 +21,7 @@ final class CoreDataService: LocalStorageServiceProtocol {
 
     static let shared: LocalStorageServiceProtocol = CoreDataService()
     private init() {
-        NotificationCenter.default.addObserver(self, 
+        NotificationCenter.default.addObserver(self,
                                                selector: #selector(saveContext),
                                                name: UIApplication.didEnterBackgroundNotification,
                                                object: nil)
@@ -30,14 +29,13 @@ final class CoreDataService: LocalStorageServiceProtocol {
 
     var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "ToDoVIPERCoreData")
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+        container.loadPersistentStores { (storeDescription, error) in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
-        })
+        }
         return container
     }()
-
 
     @objc func saveContext() {
         let context = persistentContainer.viewContext
@@ -65,9 +63,11 @@ final class CoreDataService: LocalStorageServiceProtocol {
             let tasks = (taskListEntity.tasks?.allObjects as? [TaskEntity] ?? []).map {
                 DTOTask(id: Int($0.id),
                         todo: $0.todo ?? "",
+                        subTitle: $0.subtitle ?? "",
+                        timeForToDo: $0.timeForToDo ?? "",
                         completed: $0.completed,
                         userId: Int($0.userId))
-            }.sorted { $0.id < $1.id } // Сортирую по возрастанию id, т.к. в корДата хранится как set
+            }.sorted { $0.id < $1.id }
 
             let dtoTaskList = DTOTaskList(todos: tasks, total: Int(taskListEntity.total), skip: Int(taskListEntity.skip), limit: Int(taskListEntity.limit))
             completion(.success(dtoTaskList))
@@ -76,8 +76,36 @@ final class CoreDataService: LocalStorageServiceProtocol {
         }
     }
 
+    func isContextEmpty(completion: @escaping (Bool) -> Void) {
+        let context = persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<TaskListEntity> = TaskListEntity.fetchRequest()
+        fetchRequest.fetchLimit = 1
+
+        DispatchQueue.global().async {
+            do {
+                let count = try context.count(for: fetchRequest)
+                let isEmpty = count == 0
+                DispatchQueue.main.async {
+                    completion(isEmpty)
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(false)
+                }
+            }
+        }
+    }
+
+
     func saveTasks(_ tasks: DTOTaskList, completion: @escaping (Result<Void, Error>) -> Void) {
         let context = persistentContainer.viewContext
+
+        let fetchRequest: NSFetchRequest<TaskListEntity> = TaskListEntity.fetchRequest()
+        if let existingTaskLists = try? context.fetch(fetchRequest) {
+            for taskList in existingTaskLists {
+                context.delete(taskList)
+            }
+        }
 
         let taskListEntity = TaskListEntity(context: context)
         taskListEntity.total = Int64(tasks.total)
@@ -88,6 +116,8 @@ final class CoreDataService: LocalStorageServiceProtocol {
             let taskEntity = TaskEntity(context: context)
             taskEntity.id = Int64(task.id)
             taskEntity.todo = task.todo
+            taskEntity.subtitle = task.subTitle
+            taskEntity.timeForToDo = task.timeForToDo
             taskEntity.completed = task.completed
             taskEntity.userId = Int64(task.userId)
             taskEntity.taskList = taskListEntity

@@ -12,6 +12,12 @@ protocol ToDoCellViewModelOutput: AnyObject {
     func didTapTaskCell(_ viewModel: ToDoCellViewModel)
     func didTapCheckMark(_ viewModel: ToDoCellViewModel)
     func didSwipeLeftToDelete(_ viewModel: ToDoCellViewModel)
+    func onChangeTextInTextView(_ viewModel: ToDoCellViewModel,
+                                taskNameText: String,
+                                taskSubtitleText: String,
+                                timeSubtitleText: String)
+
+
 }
 
 struct ToDoCellViewModel {
@@ -50,6 +56,15 @@ struct ToDoCellViewModel {
 
     func didSwipeLeftToDelete() {
         output?.didSwipeLeftToDelete(self)
+    }
+
+    func onChangeText(taskNameText: String,
+                      taskSubtitleText: String,
+                      timeSubtitleText: String) {
+        output?.onChangeTextInTextView(self,
+                                       taskNameText: taskNameText,
+                                       taskSubtitleText: taskSubtitleText,
+                                       timeSubtitleText: timeSubtitleText)
     }
 }
 

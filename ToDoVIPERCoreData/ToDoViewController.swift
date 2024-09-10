@@ -77,15 +77,15 @@ final class ToDoViewController: UIViewController, ToDoViewProtocol, NavigationBa
 
 // MARK: - ToDoViewOutput
 extension ToDoViewController: ToDoViewOutput {
-    func useCurrent(taskNameText: String?,
-                    taskSubtitleText: String?,
-                    timeSubtitleText: String?,
-                    cellId: String) {
-//        presenter?.changeTextInTaskFieldsAt(
-//            request: ToDoScreenFlow.OnTextChanged.Request(taskNameText: taskNameText,
-//                                                          taskSubtitleText: taskSubtitleText,
-//                                                          timeSubtitleText: timeSubtitleText,
-//                                                          cellId: cellId))
+    func onChangeTextInTextView(_ viewModel: ToDoCellViewModel, 
+                                taskNameText: String, 
+                                taskSubtitleText: String,
+                                timeSubtitleText: String) {
+        presenter?.useTextViewText(request: ToDoScreenFlow.OnTextChanged.Request(
+            id: viewModel.id,
+            taskNameText: taskNameText,
+            taskSubtitleText: taskSubtitleText,
+            timeSubtitleText: timeSubtitleText))
     }
 
     func didTapNewTaskButton() {

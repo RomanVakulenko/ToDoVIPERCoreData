@@ -17,8 +17,9 @@ protocol ToDoInteractorProtocol: AnyObject {
     func didTapFilter(request: ToDoScreenFlow.OnFilterTapped.Request)
     func didTapCheckMarkWith(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request)
     func didSwipeLeftToDelete(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request)
-}
 
+    func useTextViewText(request: ToDoScreenFlow.OnTextChanged.Request)
+}
 
 
 protocol ToDoInteractorDataStore: AnyObject {
@@ -65,12 +66,13 @@ final class ToDoInteractor: ToDoInteractorProtocol {
     func didTapFilter(request: ToDoScreenFlow.OnFilterTapped.Request) {
         filterType = request.filterType
 
-        filteredTasksListForUI = makeTaskListFilteredBy(filterType: filterType)
+        filteredTasksListForUI = makeFilteredListFromOriginalBy(filterType: filterType)
 
         if let filteredListForUI = self.filteredTasksListForUI {
             presenterUpdateUIWith(taskList: filteredListForUI)
         }
     }
+
 
     func didTapCheckMarkWith(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request) {
         guard let taskList = self.taskListFromNetOrDB else { return }
@@ -82,7 +84,7 @@ final class ToDoInteractor: ToDoInteractorProtocol {
             }
         }
 
-        filteredTasksListForUI = makeTaskListFilteredBy(filterType: filterType)
+        filteredTasksListForUI = makeFilteredListFromOriginalBy(filterType: filterType)
         if let filteredListForUI = self.filteredTasksListForUI {
             presenterUpdateUIWith(taskList: filteredListForUI)
         }
@@ -92,13 +94,29 @@ final class ToDoInteractor: ToDoInteractorProtocol {
         }
     }
 
+
     func didSwipeLeftToDelete(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request) {
         self.taskListFromNetOrDB?.tasks.removeAll(where: { String($0.id) == request.id })
         self.totalTasks -= 1
 
-        filteredTasksListForUI = makeTaskListFilteredBy(filterType: filterType)
+        filteredTasksListForUI = makeFilteredListFromOriginalBy(filterType: filterType)
         if let filteredListForUI = self.filteredTasksListForUI {
             presenterUpdateUIWith(taskList: filteredListForUI)
+        }
+
+        if let changedTaskList = self.taskListFromNetOrDB {
+            saveChanged(taskListForSave: changedTaskList)
+        }
+    }
+
+
+    func useTextViewText(request: ToDoScreenFlow.OnTextChanged.Request) {
+        guard let cellId = Int(request.id) else { return }
+
+        if let index = taskListFromNetOrDB?.tasks.firstIndex(where: { $0.id == cellId }) {
+            taskListFromNetOrDB?.tasks[index].description = request.taskNameText ?? ""
+            taskListFromNetOrDB?.tasks[index].subTitle = request.taskSubtitleText
+            taskListFromNetOrDB?.tasks[index].timeForToDo = request.timeSubtitleText
         }
 
         if let changedTaskList = self.taskListFromNetOrDB {
@@ -110,7 +128,7 @@ final class ToDoInteractor: ToDoInteractorProtocol {
 
     // MARK: - Private methods
 
-    private func makeTaskListFilteredBy(filterType: ToDoModel.FilterType) -> TaskList? {
+    private func makeFilteredListFromOriginalBy(filterType: ToDoModel.FilterType) -> TaskList? {
         if let taskList = self.taskListFromNetOrDB {
             var tasksToShow = taskList.tasks
 
@@ -190,10 +208,12 @@ final class ToDoInteractor: ToDoInteractorProtocol {
                 self.taskListFromNetOrDB = taskList
                 self.totalTasks = taskList.tasks.count
                 self.completedTasksAmount = taskList.tasks.filter { $0.isCompleted }.count
-                self.presenter?.presentToDoList(response: ToDoScreenFlow.Update.Response(taskList: taskList,
-                                                                                         totalTasks: totalTasks,
-                                                                                         completedTasksCount: completedTasksAmount,
-                                                                                         filterType: filterType))
+                self.presenter?.presentToDoList(response: ToDoScreenFlow.Update.Response(
+                    taskList: taskList,
+                    totalTasks: totalTasks,
+                    completedTasksCount: completedTasksAmount,
+                    filterType: filterType))
+
                 self.storageWorker.saveToDos(taskList) { saveResult in
                     switch saveResult {
                     case .success:
@@ -209,19 +229,3 @@ final class ToDoInteractor: ToDoInteractorProtocol {
     }
 
 }
-
-
-
-
-
-// запрашиваем из сервиса (из БД), если нет - то из сети
-
-// интерактор достань данные из локального хранилища (LocalStorageWorker), обращается к воркеру (сервис), воркер(сервис) обращается к менеджерам (сеть/ БД) и возвращает в интерактор данные
-
-//если нет в БД - воркер сделай запрос в сеть (NetworkWorker)
-
-//по иерархии интреактор - воркер, воркер на менеджер, менеджер к сервису
-
-//интерактор решает пойти в сеть или в БД, обращается к воркеру
-
-// в менеджере вызову инит Бизнес модели и из DTO в нее конвертирую

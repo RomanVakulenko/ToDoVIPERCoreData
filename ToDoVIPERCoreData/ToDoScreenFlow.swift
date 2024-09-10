@@ -61,10 +61,10 @@ enum ToDoScreenFlow {
     enum OnTextChanged{
 
         struct Request {
+            let id: String
             let taskNameText: String?
             let taskSubtitleText: String?
             let timeSubtitleText: String?
-            let cellId: String
         }
 
         struct Response {}

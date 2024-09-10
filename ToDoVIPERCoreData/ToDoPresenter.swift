@@ -16,7 +16,7 @@ protocol ToDoPresenterProtocol: AnyObject {
     var router: ToDoRoutingLogic? { get set }
     func presentWaitIndicator(response: ToDoScreenFlow.OnWaitIndicator.Response)
     
-//    func changeTextInTaskFieldsAt(request: ToDoScreenFlow.OnTextChanged.Request)
+    func useTextViewText(request: ToDoScreenFlow.OnTextChanged.Request)
     func getData(request: ToDoScreenFlow.OnDidLoadViews.Request)
     func presentToDoList(response: ToDoScreenFlow.Update.Response)
 
@@ -32,11 +32,9 @@ final class ToDoPresenter: ToDoPresentable {
     weak var view: ToDoViewProtocol?
     var interactor: ToDoInteractorProtocol?
     var router: ToDoRoutingLogic?
-//    var taskList: TaskList?
 
-    var taskNameText: String?
-    var taskSubtitleText = "Subtitle"
-    var timeSubtitleText: String?
+   private var focusedTextViewIndexPath: IndexPath?
+   private var cursorPosition: Int?
 
     // MARK: - Public methods
 
@@ -61,16 +59,9 @@ final class ToDoPresenter: ToDoPresentable {
         router?.routeToOneTaskDetailsScreen()
     }
 
-//    func changeTextInTaskFieldsAt(request: ToDoScreenFlow.OnTextChanged.Request) {
-//        guard let cellId = Int(request.cellId) else { return }
-//
-//        if let index = taskList?.tasks.firstIndex(where: { $0.id == cellId }) {
-//            taskList?.tasks[index].description = request.taskNameText ?? ""
-//            taskNameText = request.taskNameText ?? ""
-//        }
-//        taskSubtitleText = request.taskSubtitleText ?? ""
-//        timeSubtitleText = request.timeSubtitleText
-//    }
+    func useTextViewText(request: ToDoScreenFlow.OnTextChanged.Request) {
+        interactor?.useTextViewText(request: request)
+    }
 
     func presentToDoList(response: ToDoScreenFlow.Update.Response) {
         let taskList = response.taskList
@@ -200,7 +191,7 @@ final class ToDoPresenter: ToDoPresentable {
             let separatorColor = UIHelper.Color.lightGrayTimeAndSeparator
 
             let taskSubtitle = NSAttributedString(
-                string: "Task subtitle",
+                string: task.subTitle ?? "Task subtitle",
                 attributes: UIHelper.Attributed.grayInterMedium16)
             let oneTaskCell = ToDoCellViewModel(id: String(id),
                                                 backColor:  UIColor.white,
@@ -208,8 +199,8 @@ final class ToDoPresenter: ToDoPresentable {
                                                 taskSubtitleText: taskSubtitle,
                                                 checkMarkImage: checkMarkImage,
                                                 separatorColor: separatorColor,
-                                                todaySubtitle: "Время выполнения: ",
-                                                timeSubtitle: timeSubtitleText ?? "",
+                                                todaySubtitle: "Время для выполнения: ",
+                                                timeSubtitle: task.timeForToDo ?? "введи",
                                                 insets: UIEdgeInsets(top: 0,
                                                                      left: 0,
                                                                      bottom: 0,
