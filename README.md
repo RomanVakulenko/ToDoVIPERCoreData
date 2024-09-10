@@ -7,6 +7,7 @@
 - left swipe to delete task
 - filter tasks
 - marking done/notDone
+- editing text fields
 
 **Stack**
 - VIPER, dependencies injection using constructor (init)
@@ -15,4 +16,4 @@
 - Reusable
 - ActivityIndicatorView, SOLID, DRY
 
-todo: next screen for adding / editing task 
+todo: may be(?) next screen for adding/editing task 
