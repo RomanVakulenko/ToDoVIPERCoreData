@@ -15,28 +15,87 @@ enum ToDoModel {
         case cantFetchData
     }
 
-    enum FilterType {
-        case all, opened, closed
+    enum FilterType: String {
+        case all = "All"
+        case opened = "Opened"
+        case closed = "Closed"
     }
 
     struct ViewModel {
 //        let navBarBackground: UIColor
 //        let navBar: CustomNavBar
+        let screenTitle: NSAttributedString
+        let subtitle: NSAttributedString
         let backViewColor: UIColor
         let newTaskButtonTitle: NSAttributedString
+        let newTaskButtonBackColor: UIColor
         let views: [AnyDifferentiable]
         let items: [AnyDifferentiable]
     }
-
-
-
 }
 
-//
-//
-//struct ToDoModel: Decodable {
-//    var id: Int
-//    var name: String
-//    var imageURL: String
-//    var price: Int
-//}
+//DTO
+struct DTOTaskList: Decodable {
+    let todos: [DTOTask]
+    let total: Int
+    let skip: Int
+    let limit: Int
+}
+
+struct DTOTask: Decodable {
+    let id: Int
+    let todo: String
+    let subTitle: String?
+    let timeForToDo: String?
+    let completed: Bool
+    let userId: Int
+}
+
+// Бизнес-модель одной задачи
+struct Task {
+    let id: Int
+    var description: String
+    var subTitle: String?
+    var timeForToDo: String?
+    var isCompleted: Bool
+    let userId: Int
+
+    // Инициализатор из DTO
+    init(from dto: DTOTask) {
+        self.id = dto.id
+        self.description = dto.todo
+        self.subTitle = dto.subTitle
+        self.timeForToDo = dto.timeForToDo
+        self.isCompleted = dto.completed
+        self.userId = dto.userId
+    }
+}
+#warning("не понятно, что за свойства skip, userId: Int - в условии?")
+// Бизнес-модель списка задач
+struct TaskList {
+    var tasks: [Task]
+    let total: Int
+    let skip: Int
+    let limit: Int
+
+    // Инициализатор из DTO
+    init(from dto: DTOTaskList) {
+        self.tasks = dto.todos.map { Task(from: $0) }
+        self.total = dto.total
+        self.skip = dto.skip
+        self.limit = dto.limit
+    }
+    // Инициализатор для создания TaskList
+    init(tasks: [Task], total: Int, skip: Int, limit: Int) {
+        self.tasks = tasks
+        self.total = total
+        self.skip = skip
+        self.limit = limit
+    }
+
+    mutating func updateTaskDescription(withId id: Int, newDescription: String) {
+           if let index = tasks.firstIndex(where: { $0.id == id }) {
+               tasks[index].description = newDescription
+           }
+       }
+}

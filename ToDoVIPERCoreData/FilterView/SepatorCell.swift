@@ -27,20 +27,10 @@ final class SeparatorCell: BaseCollectionViewCell<SeparatorCellViewModel> {
     // MARK: - Public methods
 
     override func update(with viewModel: SeparatorCellViewModel) {
-        backView.backgroundColor = .none
+        backgroundColor = UIHelper.Color.grayBack
+        backView.backgroundColor = UIHelper.Color.grayBack
         separatorView.layer.borderWidth = viewModel.separatorBorderWidth ?? 1
         separatorView.layer.borderColor = viewModel.separatorColor.cgColor
-
-        if let separatorWidth = viewModel.separatorBorderWidth {
-            backView.snp.remakeConstraints {
-                $0.leading.trailing.top.bottom.equalToSuperview()
-                $0.height.equalTo(separatorWidth)
-            }
-            separatorView.snp.remakeConstraints {
-                $0.top.bottom.leading.trailing.equalToSuperview()
-                $0.height.equalTo(separatorWidth)
-            }
-        }
 
         updateConstraints(insets: viewModel.insets)
 
@@ -55,11 +45,11 @@ final class SeparatorCell: BaseCollectionViewCell<SeparatorCellViewModel> {
     override func setConstraints() {
         backView.snp.makeConstraints {
             $0.leading.trailing.top.bottom.equalToSuperview()
-            $0.height.equalTo(UIHelper.Margins.small1px)
+            $0.width.equalTo(UIHelper.Margins.small1px)
         }
         separatorView.snp.makeConstraints {
             $0.top.bottom.leading.trailing.equalToSuperview()
-            $0.height.equalTo(UIHelper.Margins.small1px)
+            $0.width.equalTo(UIHelper.Margins.small1px)
         }
     }
 

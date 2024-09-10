@@ -9,10 +9,6 @@ import UIKit
 import SnapKit
 
 final class OneFilterCell: BaseCollectionViewCell<OneFilterCellViewModel> {
-//
-//    enum Constants {
-//        static let some
-//    }
 
     private lazy var backView: UIView = {
         let view = UIView()
@@ -24,8 +20,7 @@ final class OneFilterCell: BaseCollectionViewCell<OneFilterCellViewModel> {
         let view = UILabel()
         view.lineBreakMode = .byTruncatingTail
         view.textColor = UIHelper.Color.graySubtitleAndFilterButtons
-        view.font = UIFont(name: "SFUIDisplay-Bold", size: 16)
-        view.font = UIFont.boldSystemFont(ofSize: 16)
+        view.font = UIFont(name: "Inter-Medium", size: 16)
         return view
     }()
 
@@ -33,17 +28,15 @@ final class OneFilterCell: BaseCollectionViewCell<OneFilterCellViewModel> {
         let view = UILabel()
         view.backgroundColor = .systemBlue
         view.layer.cornerRadius = 6
+        view.layer.masksToBounds = true
         view.textColor = .white
-        view.font = UIFont(name: "SFUIDisplay-Bold", size: 16)
+        view.font = UIFont(name: "Inter-Medium", size: 16)
         view.font = UIFont.boldSystemFont(ofSize: 16)
         return view
     }()
 
 
     // MARK: - Public methods
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
 
    override func update(with viewModel: OneFilterCellViewModel) {
        contentView.backgroundColor = .none
