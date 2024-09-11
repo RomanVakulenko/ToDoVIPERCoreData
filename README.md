@@ -2,8 +2,7 @@
 
 **ToDoVIPERCoreData** 
 - fetches data from internet,
-  
-**- saves to NSPersistentContainer (CoreData) AND recovers information after closing,**
+- **saves to NSPersistentContainer (CoreData) AND recovers information after closing,**
 - displays
 - left swipe to delete task
 - filtering tasks
