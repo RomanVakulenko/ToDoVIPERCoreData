@@ -17,3 +17,6 @@
 - ActivityIndicatorView, SOLID, DRY
 
 todo: may be(?) next screen for adding/editing task 
+
+
+<img src="https://github.com/user-attachments/assets/c0a65563-ee82-4b5a-906c-6b1cc6e38351" width="295"> 
