@@ -17,6 +17,8 @@ enum UIHelper {
         
         static let systemBlueInterBold18: [NSAttributedString.Key: Any] = [.font: Font.InterBold18, .foregroundColor: UIColor.systemBlue]
 
+        static let whiteInterBold18: [NSAttributedString.Key: Any] = [.font: Font.InterBold18, .foregroundColor: UIColor.white]
+
         static let grayInterMedium16: [NSAttributedString.Key: Any] = [.font: Font.InterMedium16, .foregroundColor: Color.graySubtitleAndFilterButtons]
 
         static let blackInterBold22: [NSAttributedString.Key: Any] = [.font: Font.InterBold22, .foregroundColor: UIColor.black]
@@ -43,9 +45,11 @@ enum UIHelper {
     enum Color {
         static let grayBack = UIColor(red: 0.94, green: 0.94, blue: 0.94, alpha: 1.00)
         static let graySubtitleAndFilterButtons = UIColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1.00)
-        static let blueBackNewTask = UIColor(red: 0.89, green: 0.92, blue: 0.98, alpha: 1.00)
+        static let blueButton = UIColor(red: 0.89, green: 0.92, blue: 0.98, alpha: 1.00)
         
         static let lightGrayTimeAndSeparator = UIColor(red: 0.84, green: 0.84, blue: 0.84, alpha: 1.00)
+        static let red = UIColor.red
+        static let systemBlue = UIColor.systemBlue
     }
     
     enum Margins {

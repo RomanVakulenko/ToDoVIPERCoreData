@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 
-protocol ToDoTableViewCellViewOutput: AnyObject { }
+protocol ToDoCollectionViewCellViewOutput: AnyObject { }
 
 final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
 
@@ -81,7 +81,7 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
         return view
     }()
 
-    weak var output: ToDoTableViewCellViewOutput?
+    weak var output: ToDoCollectionViewCellViewOutput?
 
     // MARK: - Public methods
 
@@ -94,6 +94,11 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
         separatorView.backgroundColor = viewModel.separatorColor
         todaySubtitle.text = viewModel.todaySubtitle
         timeSubtitle.text = viewModel.timeSubtitle
+
+        let isEditMode = viewModel.isEditMode
+        taskName.isUserInteractionEnabled = isEditMode
+        taskSubtitle.isUserInteractionEnabled = isEditMode
+        timeSubtitle.isUserInteractionEnabled = isEditMode
 
         updateConstraints(insets: viewModel.insets)
     }
