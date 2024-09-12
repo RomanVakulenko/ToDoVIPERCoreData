@@ -1,7 +1,3 @@
-**В 12ч 12ого сентября дали ответ, что добавление, удаление, редактирование Таска на 2ом экране - делаю - вечером загружу**
-Пока что сделал, что можно вписывать на первом экране 
-
-
 ## Features
 
 **ToDoVIPERCoreData** 
@@ -11,7 +7,7 @@
 - left swipe to delete task
 - filtering tasks
 - marking done/notDone
-- editing text fields
+- second screen for adding/editing task 
 
 **Stack**
 - VIPER, dependencies injection using constructor (init)
@@ -19,8 +15,5 @@
 - SnapKit
 - Reusable
 - ActivityIndicatorView, SOLID, DRY
-
-todo: may be(?) next screen for adding/editing task 
-
 
 <img src="https://github.com/user-attachments/assets/c0a65563-ee82-4b5a-906c-6b1cc6e38351" width="295"> 
