@@ -195,34 +195,37 @@ final class ToDoCollectionViewCell: BaseCollectionViewCell<ToDoCellViewModel> {
 // MARK: - UITextViewDelegate
 extension ToDoCollectionViewCell: UITextViewDelegate {
 
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        guard let currentText = textView.text as NSString? else { return true }
+    func textViewDidChange(_ textView: UITextView) {
+           guard let currentText = textView.text else { return }
 
-        // Первая заглавная
-        let isFirstCharacter = range.location == 0
-        let transformedText = isFirstCharacter ? text.capitalized : text.lowercased()
+           // Проверяем первый символ и изменяем его на заглавную букву
+           if !currentText.isEmpty {
+               let firstCharacter = currentText.prefix(1).capitalized
+               let remainingText = currentText.dropFirst()
+               textView.text = firstCharacter + remainingText
+           }
 
-        let updatedText = currentText.replacingCharacters(in: range, with: transformedText)
+           // Обновляем текст в зависимости от того, какое поле редактируется
+           if textView == self.taskName {
+               viewModel?.onChangeText(
+                   taskNameText: self.taskName.text,
+                   taskSubtitleText: self.taskSubtitle.text,
+                   timeSubtitleText: self.timeSubtitle.text ?? "")
+           } else if textView == self.taskSubtitle {
+               viewModel?.onChangeText(
+                   taskNameText: self.taskName.text,
+                   taskSubtitleText: self.taskSubtitle.text,
+                   timeSubtitleText: self.timeSubtitle.text ?? "")
+           } else if textView == self.timeSubtitle {
+               viewModel?.onChangeText(
+                   taskNameText: self.taskName.text,
+                   taskSubtitleText: self.taskSubtitle.text,
+                   timeSubtitleText: self.timeSubtitle.text ?? "")
+           }
+       }
 
-        if textView == self.taskName {
-            self.taskName.text = updatedText
-        } else if textView == self.taskSubtitle {
-            self.taskSubtitle.text = updatedText
-        } else if textView == self.timeSubtitle {
-            self.timeSubtitle.text = updatedText
-        }
-
-        viewModel?.onChangeText(
-            taskNameText: self.taskName.text,
-            taskSubtitleText: self.taskSubtitle.text,
-            timeSubtitleText: self.timeSubtitle.text ?? "")
-
-        return false
-    }
-
-
-    func textViewDidEndEditing(_ textView: UITextView) {
-        textView.resignFirstResponder()
-    }
+       func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+           return true 
+       }
 }
 
