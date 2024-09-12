@@ -43,6 +43,22 @@
 		AD8CD3162C908270007EB51C /* NetworkServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3142C908270007EB51C /* NetworkServiceTests.swift */; };
 		AD8CD3182C9082C0007EB51C /* MockURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3172C9082C0007EB51C /* MockURLSession.swift */; };
 		AD8CD3192C9082C0007EB51C /* MockURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3172C9082C0007EB51C /* MockURLSession.swift */; };
+		AD8CD31B2C92E4E9007EB51C /* EditTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD31A2C92E4E9007EB51C /* EditTaskView.swift */; };
+		AD8CD31C2C92E4E9007EB51C /* EditTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD31A2C92E4E9007EB51C /* EditTaskView.swift */; };
+		AD8CD3252C92E57F007EB51C /* EditTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD31E2C92E57F007EB51C /* EditTaskViewController.swift */; };
+		AD8CD3262C92E57F007EB51C /* EditTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD31E2C92E57F007EB51C /* EditTaskViewController.swift */; };
+		AD8CD3272C92E57F007EB51C /* EditTaskPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD31F2C92E57F007EB51C /* EditTaskPresenter.swift */; };
+		AD8CD3282C92E57F007EB51C /* EditTaskPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD31F2C92E57F007EB51C /* EditTaskPresenter.swift */; };
+		AD8CD3292C92E57F007EB51C /* EditTaskScreenFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3202C92E57F007EB51C /* EditTaskScreenFlow.swift */; };
+		AD8CD32A2C92E57F007EB51C /* EditTaskScreenFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3202C92E57F007EB51C /* EditTaskScreenFlow.swift */; };
+		AD8CD32B2C92E57F007EB51C /* EditTaskInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3212C92E57F007EB51C /* EditTaskInteractor.swift */; };
+		AD8CD32C2C92E57F007EB51C /* EditTaskInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3212C92E57F007EB51C /* EditTaskInteractor.swift */; };
+		AD8CD32D2C92E57F007EB51C /* EditTaskRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3222C92E57F007EB51C /* EditTaskRouter.swift */; };
+		AD8CD32E2C92E57F007EB51C /* EditTaskRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3222C92E57F007EB51C /* EditTaskRouter.swift */; };
+		AD8CD32F2C92E57F007EB51C /* EditTaskEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3232C92E57F007EB51C /* EditTaskEntity.swift */; };
+		AD8CD3302C92E57F007EB51C /* EditTaskEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3232C92E57F007EB51C /* EditTaskEntity.swift */; };
+		AD8CD3312C92E57F007EB51C /* EditTaskModuleBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3242C92E57F007EB51C /* EditTaskModuleBuilder.swift */; };
+		AD8CD3322C92E57F007EB51C /* EditTaskModuleBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3242C92E57F007EB51C /* EditTaskModuleBuilder.swift */; };
 		ADBB3EC62C8856590096B776 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBB3EC52C8856590096B776 /* AppDelegate.swift */; };
 		ADBB3EC82C8856590096B776 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBB3EC72C8856590096B776 /* SceneDelegate.swift */; };
 		ADBB3ECF2C88565B0096B776 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ADBB3ECE2C88565B0096B776 /* Assets.xcassets */; };
@@ -57,7 +73,7 @@
 		ADE6E9A22C8A3B040061C69D /* NetworkManagerErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE6E9A12C8A3B040061C69D /* NetworkManagerErrors.swift */; };
 		ADE6E9A42C8A439E0061C69D /* StorageDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE6E9A32C8A439E0061C69D /* StorageDataManager.swift */; };
 		ADE6E9A62C8AD9450061C69D /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ADE6E9A52C8AD9440061C69D /* CoreData.framework */; };
-		ADE6E9A92C8ADE090061C69D /* ToDoStorageWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE6E9A82C8ADE090061C69D /* ToDoStorageWorker.swift */; };
+		ADE6E9A92C8ADE090061C69D /* StorageWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE6E9A82C8ADE090061C69D /* StorageWorker.swift */; };
 		ADE6E9AF2C8AEECB0061C69D /* ToDoVIPERCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = ADE6E9AD2C8AEECB0061C69D /* ToDoVIPERCoreData.xcdatamodeld */; };
 		ADE920232C8B0680004B6166 /* CoreDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE920222C8B0680004B6166 /* CoreDataService.swift */; };
 /* End PBXBuildFile section */
@@ -106,6 +122,14 @@
 		AD8CD3112C90823E007EB51C /* NetworkWorkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkWorkerTests.swift; sourceTree = "<group>"; };
 		AD8CD3142C908270007EB51C /* NetworkServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceTests.swift; sourceTree = "<group>"; };
 		AD8CD3172C9082C0007EB51C /* MockURLSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLSession.swift; sourceTree = "<group>"; };
+		AD8CD31A2C92E4E9007EB51C /* EditTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskView.swift; sourceTree = "<group>"; };
+		AD8CD31E2C92E57F007EB51C /* EditTaskViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditTaskViewController.swift; sourceTree = "<group>"; };
+		AD8CD31F2C92E57F007EB51C /* EditTaskPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditTaskPresenter.swift; sourceTree = "<group>"; };
+		AD8CD3202C92E57F007EB51C /* EditTaskScreenFlow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditTaskScreenFlow.swift; sourceTree = "<group>"; };
+		AD8CD3212C92E57F007EB51C /* EditTaskInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditTaskInteractor.swift; sourceTree = "<group>"; };
+		AD8CD3222C92E57F007EB51C /* EditTaskRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditTaskRouter.swift; sourceTree = "<group>"; };
+		AD8CD3232C92E57F007EB51C /* EditTaskEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditTaskEntity.swift; sourceTree = "<group>"; };
+		AD8CD3242C92E57F007EB51C /* EditTaskModuleBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditTaskModuleBuilder.swift; sourceTree = "<group>"; };
 		ADBB3EC22C8856590096B776 /* ToDoVIPERCoreData.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoVIPERCoreData.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADBB3EC52C8856590096B776 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ADBB3EC72C8856590096B776 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -122,7 +146,7 @@
 		ADE6E9A12C8A3B040061C69D /* NetworkManagerErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerErrors.swift; sourceTree = "<group>"; };
 		ADE6E9A32C8A439E0061C69D /* StorageDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageDataManager.swift; sourceTree = "<group>"; };
 		ADE6E9A52C8AD9440061C69D /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		ADE6E9A82C8ADE090061C69D /* ToDoStorageWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoStorageWorker.swift; sourceTree = "<group>"; };
+		ADE6E9A82C8ADE090061C69D /* StorageWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageWorker.swift; sourceTree = "<group>"; };
 		ADE6E9AE2C8AEECB0061C69D /* ToDoVIPERCoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ToDoVIPERCoreData.xcdatamodel; sourceTree = "<group>"; };
 		ADE920222C8B0680004B6166 /* CoreDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataService.swift; sourceTree = "<group>"; };
 		D624966E3D25E8FBDA50305C /* Pods_ToDoVIPERCoreData.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDoVIPERCoreData.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -162,11 +186,11 @@
 			children = (
 				AD05E4912C88620F001A0730 /* ToDoModuleBuilder.swift */,
 				AD1185012C89CAA8007AC8DF /* ToDoScreenFlow.swift */,
+				AD5A9FA72C88842200600F26 /* ToDoEntity.swift */,
 				AD1184FF2C89C1BD007AC8DF /* ToDoView.swift */,
 				AD05E4962C8862C6001A0730 /* ToDoViewController.swift */,
 				AD05E49A2C886615001A0730 /* ToDoInteractor.swift */,
 				AD05E4982C8865EE001A0730 /* ToDoPresenter.swift */,
-				AD5A9FA72C88842200600F26 /* ToDoEntity.swift */,
 				AD05E49C2C886729001A0730 /* ToDoRouter.swift */,
 				AD1185112C89F669007AC8DF /* FilterView */,
 				AD5A9FA62C886BAB00600F26 /* ToDoCell */,
@@ -180,6 +204,7 @@
 			children = (
 				AD05E4932C886214001A0730 /* ToDo */,
 				AD11850E2C89DA95007AC8DF /* Helpers */,
+				AD8CD31D2C92E529007EB51C /* EditTask */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -230,7 +255,7 @@
 			isa = PBXGroup;
 			children = (
 				AD58F63D2C8B4B910049F47A /* ToDoNetworkWorker.swift */,
-				ADE6E9A82C8ADE090061C69D /* ToDoStorageWorker.swift */,
+				ADE6E9A82C8ADE090061C69D /* StorageWorker.swift */,
 				AD58F63F2C8B4BA50049F47A /* Managers */,
 			);
 			path = Workers;
@@ -286,6 +311,21 @@
 				AD8CD3172C9082C0007EB51C /* MockURLSession.swift */,
 			);
 			path = ToDoVIPERCoreDataTests;
+			sourceTree = "<group>";
+		};
+		AD8CD31D2C92E529007EB51C /* EditTask */ = {
+			isa = PBXGroup;
+			children = (
+				AD8CD3242C92E57F007EB51C /* EditTaskModuleBuilder.swift */,
+				AD8CD3202C92E57F007EB51C /* EditTaskScreenFlow.swift */,
+				AD8CD3232C92E57F007EB51C /* EditTaskEntity.swift */,
+				AD8CD31A2C92E4E9007EB51C /* EditTaskView.swift */,
+				AD8CD31E2C92E57F007EB51C /* EditTaskViewController.swift */,
+				AD8CD31F2C92E57F007EB51C /* EditTaskPresenter.swift */,
+				AD8CD3212C92E57F007EB51C /* EditTaskInteractor.swift */,
+				AD8CD3222C92E57F007EB51C /* EditTaskRouter.swift */,
+			);
+			path = EditTask;
 			sourceTree = "<group>";
 		};
 		ADBB3EB92C8856590096B776 = {
@@ -509,11 +549,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD8CD3192C9082C0007EB51C /* MockURLSession.swift in Sources */,
+				AD8CD3282C92E57F007EB51C /* EditTaskPresenter.swift in Sources */,
 				AD8CD3162C908270007EB51C /* NetworkServiceTests.swift in Sources */,
 				AD8CD3102C9080FA007EB51C /* MockNetworkService.swift in Sources */,
+				AD8CD32C2C92E57F007EB51C /* EditTaskInteractor.swift in Sources */,
+				AD8CD32E2C92E57F007EB51C /* EditTaskRouter.swift in Sources */,
+				AD8CD31C2C92E4E9007EB51C /* EditTaskView.swift in Sources */,
+				AD8CD3302C92E57F007EB51C /* EditTaskEntity.swift in Sources */,
+				AD8CD3322C92E57F007EB51C /* EditTaskModuleBuilder.swift in Sources */,
 				AD8CD30D2C9080AC007EB51C /* NetworkManagerTests.swift in Sources */,
 				AD8CD3132C90823E007EB51C /* NetworkWorkerTests.swift in Sources */,
 				AD8CD3052C908057007EB51C /* ToDoVIPERCoreDataTests.swift in Sources */,
+				AD8CD32A2C92E57F007EB51C /* EditTaskScreenFlow.swift in Sources */,
+				AD8CD3262C92E57F007EB51C /* EditTaskViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -524,16 +572,20 @@
 				ADE6E9922C8A2DB00061C69D /* NetworkManager.swift in Sources */,
 				AD05E49B2C886615001A0730 /* ToDoInteractor.swift in Sources */,
 				ADE6E9902C8A163D0061C69D /* Print global.swift in Sources */,
+				AD8CD32F2C92E57F007EB51C /* EditTaskEntity.swift in Sources */,
 				AD1185092C89D88A007AC8DF /* NavigationBarControllable.swift in Sources */,
 				ADE6E9A42C8A439E0061C69D /* StorageDataManager.swift in Sources */,
 				AD1185042C89D7FA007AC8DF /* CustomNavBar.swift in Sources */,
 				AD05E4922C88620F001A0730 /* ToDoModuleBuilder.swift in Sources */,
+				AD8CD3312C92E57F007EB51C /* EditTaskModuleBuilder.swift in Sources */,
 				ADBB3EC62C8856590096B776 /* AppDelegate.swift in Sources */,
 				AD1185002C89C1BD007AC8DF /* ToDoView.swift in Sources */,
 				AD8CD30C2C9080AC007EB51C /* NetworkManagerTests.swift in Sources */,
 				AD1185022C89CAA8007AC8DF /* ToDoScreenFlow.swift in Sources */,
 				AD1185062C89D839007AC8DF /* AlertDisplayable.swift in Sources */,
 				ADE6E9A02C8A36F00061C69D /* NetworkService.swift in Sources */,
+				AD8CD3292C92E57F007EB51C /* EditTaskScreenFlow.swift in Sources */,
+				AD8CD32D2C92E57F007EB51C /* EditTaskRouter.swift in Sources */,
 				AD05E49D2C886729001A0730 /* ToDoRouter.swift in Sources */,
 				ADE6E9A22C8A3B040061C69D /* NetworkManagerErrors.swift in Sources */,
 				AD1184FB2C89B92A007AC8DF /* BaseCollectionViewCell.swift in Sources */,
@@ -542,14 +594,17 @@
 				AD1184F92C89B871007AC8DF /* BaseTableViewCell.swift in Sources */,
 				AD8CD3122C90823E007EB51C /* NetworkWorkerTests.swift in Sources */,
 				AD11851B2C8A00C9007AC8DF /* SeparatorCellViewModel.swift in Sources */,
+				AD8CD3272C92E57F007EB51C /* EditTaskPresenter.swift in Sources */,
+				AD8CD32B2C92E57F007EB51C /* EditTaskInteractor.swift in Sources */,
 				AD11850D2C89D9E8007AC8DF /* SpinnerDisplayable.swift in Sources */,
 				AD8CD3152C908270007EB51C /* NetworkServiceTests.swift in Sources */,
-				ADE6E9A92C8ADE090061C69D /* ToDoStorageWorker.swift in Sources */,
+				ADE6E9A92C8ADE090061C69D /* StorageWorker.swift in Sources */,
 				AD8CD3182C9082C0007EB51C /* MockURLSession.swift in Sources */,
 				ADE6E9AF2C8AEECB0061C69D /* ToDoVIPERCoreData.xcdatamodeld in Sources */,
 				AD1185152C89FA3C007AC8DF /* OneFilterCell.swift in Sources */,
 				AD05E4972C8862C7001A0730 /* ToDoViewController.swift in Sources */,
 				AD5A9FA82C88842200600F26 /* ToDoEntity.swift in Sources */,
+				AD8CD31B2C92E4E9007EB51C /* EditTaskView.swift in Sources */,
 				AD05E4992C8865EE001A0730 /* ToDoPresenter.swift in Sources */,
 				AD11850B2C89D8B4007AC8DF /* UIHelper.swift in Sources */,
 				ADBB3EC82C8856590096B776 /* SceneDelegate.swift in Sources */,
@@ -557,6 +612,7 @@
 				ADE6E99A2C8A34BE0061C69D /* DataMapperError.swift in Sources */,
 				ADE6E9982C8A347D0061C69D /* DataMapper.swift in Sources */,
 				AD8CD30F2C9080FA007EB51C /* MockNetworkService.swift in Sources */,
+				AD8CD3252C92E57F007EB51C /* EditTaskViewController.swift in Sources */,
 				AD5A9FA52C886ADB00600F26 /* ToDoCollectionViewCell.swift in Sources */,
 				AD1185102C89F664007AC8DF /* CollectionFilterView.swift in Sources */,
 				AD1185132C89F7EE007AC8DF /* CollectionFilterViewModel.swift in Sources */,

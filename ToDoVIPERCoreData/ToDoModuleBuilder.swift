@@ -14,27 +14,31 @@ protocol ToDoModuleBuilderProtocol: AnyObject {
 final class ToDoModuleBuilder: ToDoModuleBuilderProtocol {
 
     func getController() -> UIViewController {
-        let view = ToDoViewController()
+        let viewController = ToDoViewController()
 
         let storageManager = StorageDataManager.shared
         let networkManager = NetworkManager(networkService: NetworkService(),
                                             mapper: DataMapper())
         let networkWorker = ToDoNetworkWorker(networkManager: networkManager)
 
-        let storageWorker = ToDoStorageWorker(coreDataManager: storageManager)
+        let storageWorker = StorageWorker(coreDataManager: storageManager)
 
         let interactor = ToDoInteractor(networkWorker: networkWorker,
                                         storageWorker: storageWorker)
         let presenter = ToDoPresenter()
         let router = ToDoRouter()
 
+        viewController.presenter = presenter
 
-        view.presenter = presenter
-        presenter.view = view
+        presenter.viewController = viewController
         presenter.interactor = interactor
         presenter.router = router
-        interactor.presenter = presenter
 
-        return view
+        interactor.presenter = presenter
+        
+        router.viewController = viewController
+        router.dataStore = interactor
+
+        return viewController
     }
 }

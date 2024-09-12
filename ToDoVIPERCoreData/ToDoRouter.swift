@@ -8,27 +8,33 @@
 import UIKit
 
 protocol ToDoRoutingLogic: AnyObject {
-    func routeToOneTaskDetailsScreen()
+    func routeToOneTaskEditScreen()
 }
 
+protocol ToDoScreenDataPassing {
+    var dataStore: ToDoInteractorDataStore? { get }
+}
 
-final class ToDoRouter: ToDoRoutingLogic {
+final class ToDoRouter: ToDoRoutingLogic, ToDoScreenDataPassing {
 
     // MARK: - Public properties
     weak var viewController: ToDoViewController?
     weak var dataStore: ToDoInteractorDataStore?
 
     // MARK: - Public methods
-    func routeToOneTaskDetailsScreen() {
-        //        if let id = dataStore?.model {
-        //                let oneTaskDetailsController = OneTaskDetailsBuilder().getControllerWith(model: model)
-        //                let navigationController = UINavigationController(rootViewController: viewController)
-        //
-        //                DispatchQueue.main.async { [weak self] in
-        //                    if let navigationController = self?.viewController?.navigationController {
-        //                        navigationController.pushViewController(oneTaskDetailsController, animated: true)
-        //                    }
-        //                }
-        //        }
+    func routeToOneTaskEditScreen() {
+        if let addOrEdit = dataStore?.addOrEdit {
+            let oneTaskEditController = EditTaskModuleBuilder().getControllerWith(
+                task: dataStore?.selectedTask,
+                taskList: dataStore?.taskListFromNetOrDB,
+                type: addOrEdit)
+
+            DispatchQueue.main.async { [weak self] in
+                if let navigationController = self?.viewController?.navigationController {
+                    navigationController.pushViewController(oneTaskEditController, animated: true)
+                }
+            }
+        }
     }
+
 }
