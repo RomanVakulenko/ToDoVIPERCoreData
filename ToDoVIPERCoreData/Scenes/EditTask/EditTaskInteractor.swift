@@ -83,6 +83,9 @@ final class EditTaskInteractor: EditTaskInteractorProtocol, EditTaskInteractorDa
             if let changedTaskList = self.taskListFromNetOrDB {
                 saveChanged(taskListForSave: changedTaskList)
             }
+            presenter?.presentAlert(response: EditTaskScreenFlow.AlertInfo.Response(
+                error: nil,
+                alertAt: .savedSuccessfully))
             presenter?.presentRouteBack(response: ToDoScreenFlow.OnSelectItem.Response())
 
         } else if addOrEditType == .edit {
@@ -95,6 +98,9 @@ final class EditTaskInteractor: EditTaskInteractorProtocol, EditTaskInteractorDa
                 if let changedTaskList = self.taskListFromNetOrDB {
                     saveChanged(taskListForSave: changedTaskList)
                 }
+                presenter?.presentAlert(response: EditTaskScreenFlow.AlertInfo.Response(
+                    error: nil,
+                    alertAt: .savedSuccessfully))
                 presenter?.presentRouteBack(response: ToDoScreenFlow.OnSelectItem.Response())
             }
         } else {
