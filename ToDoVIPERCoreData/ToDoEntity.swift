@@ -52,7 +52,7 @@ struct DTOTask: Decodable {
 }
 
 // Бизнес-модель одной задачи
-struct Task {
+struct OneTask {
     let id: Int
     var description: String
     var subTitle: String?
@@ -69,24 +69,34 @@ struct Task {
         self.isCompleted = dto.completed
         self.userId = dto.userId
     }
+
+    // Инициализатор из ViewModel
+    init(from viewModel: ToDoCellViewModel) {
+        self.id = Int(viewModel.id) ?? 0
+        self.description = viewModel.taskNameText.string
+        self.subTitle = viewModel.taskSubtitleText.string
+        self.timeForToDo = viewModel.timeSubtitle
+        self.isCompleted = false
+        self.userId = Int.random(in: 1...1000)
+    }
 }
 #warning("не понятно, что за свойства skip, userId: Int - в условии?")
 // Бизнес-модель списка задач
 struct TaskList {
-    var tasks: [Task]
+    var tasks: [OneTask]
     let total: Int
     let skip: Int
     let limit: Int
 
     // Инициализатор из DTO
     init(from dto: DTOTaskList) {
-        self.tasks = dto.todos.map { Task(from: $0) }
+        self.tasks = dto.todos.map { OneTask(from: $0) }
         self.total = dto.total
         self.skip = dto.skip
         self.limit = dto.limit
     }
     // Инициализатор для создания TaskList
-    init(tasks: [Task], total: Int, skip: Int, limit: Int) {
+    init(tasks: [OneTask], total: Int, skip: Int, limit: Int) {
         self.tasks = tasks
         self.total = total
         self.skip = skip

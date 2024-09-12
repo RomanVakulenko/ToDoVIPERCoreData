@@ -24,7 +24,7 @@ final class StorageDataManager: LocalStorageManagerProtocol {
             switch result {
             case .success(let dtoTaskList):
                 let tasks = dtoTaskList.todos.map { 
-                    Task(from: DTOTask(id: Int($0.id),
+                    OneTask(from: DTOTask(id: Int($0.id),
                                        todo: $0.todo,
                                        subTitle: $0.subTitle ?? "",
                                        timeForToDo: $0.timeForToDo ?? "",
