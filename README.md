@@ -12,6 +12,7 @@
 
 **Stack**
 - VIPER, dependencies injection using constructor (init)
+- XCTest
 - CoreData
 - DifferenceKit for optimizing updates
 - SnapKit
