@@ -11,7 +11,6 @@ import CoreData
 
 protocol ToDoInteractorProtocol: AnyObject {
     var presenter: ToDoPresenterProtocol? { get set }
-//    var taskListFromNetOrDB: TaskList? { get set }
 
     func getData(request: ToDoScreenFlow.OnDidLoadViews.Request)
     func didTapFilter(request: ToDoScreenFlow.OnFilterTapped.Request)
@@ -179,6 +178,7 @@ final class ToDoInteractor: ToDoInteractorProtocol, ToDoInteractorDataStore {
             case .success:
                 print("Updated data saved to DB successfully.")
             case .failure(let error):
+                presenter?.presentAlert(response: ToDoScreenFlow.AlertInfo.Response(error: error))
                 print("Failed to save data to DB: \(error)")
             }
         }
@@ -212,6 +212,7 @@ final class ToDoInteractor: ToDoInteractorProtocol, ToDoInteractorDataStore {
 
             case .failure(let error):
                 print("Failed to load data from DB: \(error)")
+                presenter?.presentAlert(response: ToDoScreenFlow.AlertInfo.Response(error: error))
                 self.loadToDosFromNet()
             }
         }
@@ -235,15 +236,18 @@ final class ToDoInteractor: ToDoInteractorProtocol, ToDoInteractorDataStore {
                     completedTasksCount: completedTasksAmount,
                     filterType: filterType))
 
-                self.storageWorker.saveToDos(taskList) { saveResult in
+                self.storageWorker.saveToDos(taskList) { [weak self] saveResult in
+                    guard let self = self else { return }
                     switch saveResult {
                     case .success:
                         print("Data saved to DB successfully.")
                     case .failure(let error):
+                        presenter?.presentAlert(response: ToDoScreenFlow.AlertInfo.Response(error: error))
                         print("Failed to save data to DB: \(error)")
                     }
                 }
             case .failure(let error):
+                presenter?.presentAlert(response: ToDoScreenFlow.AlertInfo.Response(error: error))
                 print("Failed to load data from network: \(error)")
             }
         }

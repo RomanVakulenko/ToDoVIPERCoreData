@@ -28,6 +28,8 @@ protocol ToDoPresenterProtocol: AnyObject {
 
     func didSwipeLeftToDelete(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request)
     func presentRouteToAddOrEditTaskScreen(response: ToDoScreenFlow.OnSelectItem.Response)
+
+    func presentAlert(response: ToDoScreenFlow.AlertInfo.Response)
 }
 
 // MARK: - ToDoPresenter
@@ -148,6 +150,20 @@ final class ToDoPresenter: ToDoPresentable {
     func presentWaitIndicator(response: ToDoScreenFlow.OnWaitIndicator.Response) {
         DispatchQueue.main.async { [weak self] in
             self?.viewController?.displayWaitIndicator(viewModel: ToDoScreenFlow.OnWaitIndicator.ViewModel(isShow: response.isShow))
+        }
+    }
+
+    func presentAlert(response: ToDoScreenFlow.AlertInfo.Response) {
+        let title = "Error"
+        let text = response.error.localizedDescription
+        let buttonTitle = "Ok"
+
+        DispatchQueue.main.async { [weak self] in
+            self?.viewController?.displayAlert(
+                viewModel: ToDoScreenFlow.AlertInfo.ViewModel(
+                    title: title,
+                    text: text,
+                    firstButtonTitle: buttonTitle))
         }
     }
 

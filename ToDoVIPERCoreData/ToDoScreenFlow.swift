@@ -105,7 +105,7 @@ enum ToDoScreenFlow {
         struct Request {}
 
         struct Response {
-            let error: Error?
+            let error: Error
         }
 
         struct ViewModel {
