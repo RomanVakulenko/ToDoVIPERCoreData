@@ -13,6 +13,7 @@ protocol ToDoViewProtocol: AnyObject {
 
     func displayUpdate(viewModel: ToDoScreenFlow.Update.ViewModel)
     func displayWaitIndicator(viewModel: ToDoScreenFlow.OnWaitIndicator.ViewModel)
+    func displayAlert(viewModel: ToDoScreenFlow.AlertInfo.ViewModel)
 }
 
 
@@ -59,6 +60,11 @@ final class ToDoViewController: UIViewController, ToDoViewProtocol, NavigationBa
         contentView.displayWaitIndicator(viewModel: viewModel)
     }
 
+    func displayAlert(viewModel: ToDoScreenFlow.AlertInfo.ViewModel) {
+        showAlert(title: viewModel.title,
+                  message: viewModel.text,
+                  firstButtonTitle: viewModel.firstButtonTitle)
+    }
 
     // MARK: - Private methods
     private func configure() {
