@@ -12,6 +12,7 @@
 
 **Stack**
 - VIPER, dependencies injection using constructor (init)
+- CoreData
 - DifferenceKit for optimizing updates
 - SnapKit
 - Reusable
