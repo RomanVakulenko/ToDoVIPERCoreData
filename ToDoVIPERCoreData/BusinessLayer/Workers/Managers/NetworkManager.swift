@@ -20,7 +20,7 @@ final class NetworkManager {
     private let mapper: DataMapperProtocol
 
     // MARK: - Init
-    init(networkService: NetworkServiceProtocol, mapper: DataMapper) {
+    init(networkService: NetworkServiceProtocol, mapper: DataMapperProtocol) {
         self.networkService = networkService
         self.mapper = mapper
     }
@@ -69,3 +69,5 @@ extension NetworkManager: NetworkManagerProtocol {
         }
     }
 }
+
+
