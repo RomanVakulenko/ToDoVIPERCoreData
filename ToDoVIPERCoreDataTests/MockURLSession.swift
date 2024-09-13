@@ -1,4 +1,3 @@
-//
 //  MockURLSession.swift
 //  ToDoVIPERCoreData
 //
@@ -13,6 +12,7 @@ final class MockURLSession {
 
     func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
         completionHandler(data, nil, error)
-        return URLSessionDataTask() // Mock DataTask
+        return URLSessionDataTask()
     }
 }
+
