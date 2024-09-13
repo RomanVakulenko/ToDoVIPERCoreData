@@ -79,6 +79,15 @@ struct OneTask {
         self.isCompleted = false
         self.userId = Int.random(in: 1...1000)
     }
+
+    init(id: Int, description: String, subTitle: String? = nil, timeForToDo: String? = nil, isCompleted: Bool = false, userId: Int) {
+        self.id = id
+        self.description = description
+        self.subTitle = subTitle
+        self.timeForToDo = timeForToDo
+        self.isCompleted = isCompleted
+        self.userId = userId
+    }
 }
 #warning("не понятно, что за свойства skip, userId: Int - в условии?")
 // Бизнес-модель списка задач
