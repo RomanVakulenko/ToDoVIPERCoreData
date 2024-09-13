@@ -29,7 +29,6 @@
 		AD1185192C8A00A8007AC8DF /* SepatorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1185182C8A00A8007AC8DF /* SepatorCell.swift */; };
 		AD11851B2C8A00C9007AC8DF /* SeparatorCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD11851A2C8A00C9007AC8DF /* SeparatorCellViewModel.swift */; };
 		AD2C62C62C9433AC008F12E2 /* NetworkManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2C62C52C9433AC008F12E2 /* NetworkManagerTests.swift */; };
-		AD2C62C82C943476008F12E2 /* NetworkServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2C62C72C943476008F12E2 /* NetworkServiceTests.swift */; };
 		AD2C62CA2C943494008F12E2 /* MockNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2C62C92C943494008F12E2 /* MockNetworkService.swift */; };
 		AD2C62CC2C9434B2008F12E2 /* MockURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2C62CB2C9434B2008F12E2 /* MockURLSession.swift */; };
 		AD2C62CE2C9434CB008F12E2 /* MockDataMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2C62CD2C9434CB008F12E2 /* MockDataMapper.swift */; };
@@ -45,6 +44,7 @@
 		AD8CD32D2C92E57F007EB51C /* EditTaskRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3222C92E57F007EB51C /* EditTaskRouter.swift */; };
 		AD8CD32F2C92E57F007EB51C /* EditTaskEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3232C92E57F007EB51C /* EditTaskEntity.swift */; };
 		AD8CD3312C92E57F007EB51C /* EditTaskModuleBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8CD3242C92E57F007EB51C /* EditTaskModuleBuilder.swift */; };
+		AD9124512C9499C800D0DB85 /* ToDoInteractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9124502C9499C800D0DB85 /* ToDoInteractorTests.swift */; };
 		ADBB3EC62C8856590096B776 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBB3EC52C8856590096B776 /* AppDelegate.swift */; };
 		ADBB3EC82C8856590096B776 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBB3EC72C8856590096B776 /* SceneDelegate.swift */; };
 		ADBB3ECF2C88565B0096B776 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ADBB3ECE2C88565B0096B776 /* Assets.xcassets */; };
@@ -101,7 +101,6 @@
 		AD2C62BB2C94330A008F12E2 /* ToDoVIPERCoreDataTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ToDoVIPERCoreDataTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD2C62C42C9433AB008F12E2 /* ToDoVIPERCoreDataTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ToDoVIPERCoreDataTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		AD2C62C52C9433AC008F12E2 /* NetworkManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerTests.swift; sourceTree = "<group>"; };
-		AD2C62C72C943476008F12E2 /* NetworkServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceTests.swift; sourceTree = "<group>"; };
 		AD2C62C92C943494008F12E2 /* MockNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNetworkService.swift; sourceTree = "<group>"; };
 		AD2C62CB2C9434B2008F12E2 /* MockURLSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLSession.swift; sourceTree = "<group>"; };
 		AD2C62CD2C9434CB008F12E2 /* MockDataMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDataMapper.swift; sourceTree = "<group>"; };
@@ -116,6 +115,7 @@
 		AD8CD3222C92E57F007EB51C /* EditTaskRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditTaskRouter.swift; sourceTree = "<group>"; };
 		AD8CD3232C92E57F007EB51C /* EditTaskEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditTaskEntity.swift; sourceTree = "<group>"; };
 		AD8CD3242C92E57F007EB51C /* EditTaskModuleBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditTaskModuleBuilder.swift; sourceTree = "<group>"; };
+		AD9124502C9499C800D0DB85 /* ToDoInteractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoInteractorTests.swift; sourceTree = "<group>"; };
 		ADBB3EC22C8856590096B776 /* ToDoVIPERCoreData.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoVIPERCoreData.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADBB3EC52C8856590096B776 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ADBB3EC72C8856590096B776 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -240,11 +240,8 @@
 		AD2C62BC2C94330A008F12E2 /* ToDoVIPERCoreDataTests */ = {
 			isa = PBXGroup;
 			children = (
-				AD2C62C52C9433AC008F12E2 /* NetworkManagerTests.swift */,
-				AD2C62C72C943476008F12E2 /* NetworkServiceTests.swift */,
-				AD2C62C92C943494008F12E2 /* MockNetworkService.swift */,
-				AD2C62CB2C9434B2008F12E2 /* MockURLSession.swift */,
-				AD2C62CD2C9434CB008F12E2 /* MockDataMapper.swift */,
+				AD9124502C9499C800D0DB85 /* ToDoInteractorTests.swift */,
+				AD9124522C949F7600D0DB85 /* MockNetworkTests */,
 				AD2C62C42C9433AB008F12E2 /* ToDoVIPERCoreDataTests-Bridging-Header.h */,
 			);
 			path = ToDoVIPERCoreDataTests;
@@ -312,6 +309,17 @@
 				AD8CD3222C92E57F007EB51C /* EditTaskRouter.swift */,
 			);
 			path = EditTask;
+			sourceTree = "<group>";
+		};
+		AD9124522C949F7600D0DB85 /* MockNetworkTests */ = {
+			isa = PBXGroup;
+			children = (
+				AD2C62C52C9433AC008F12E2 /* NetworkManagerTests.swift */,
+				AD2C62C92C943494008F12E2 /* MockNetworkService.swift */,
+				AD2C62CB2C9434B2008F12E2 /* MockURLSession.swift */,
+				AD2C62CD2C9434CB008F12E2 /* MockDataMapper.swift */,
+			);
+			path = MockNetworkTests;
 			sourceTree = "<group>";
 		};
 		ADBB3EB92C8856590096B776 = {
@@ -537,7 +545,7 @@
 			files = (
 				AD2C62CC2C9434B2008F12E2 /* MockURLSession.swift in Sources */,
 				AD2C62CA2C943494008F12E2 /* MockNetworkService.swift in Sources */,
-				AD2C62C82C943476008F12E2 /* NetworkServiceTests.swift in Sources */,
+				AD9124512C9499C800D0DB85 /* ToDoInteractorTests.swift in Sources */,
 				AD2C62C62C9433AC008F12E2 /* NetworkManagerTests.swift in Sources */,
 				AD2C62CE2C9434CB008F12E2 /* MockDataMapper.swift in Sources */,
 			);

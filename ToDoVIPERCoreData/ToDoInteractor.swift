@@ -47,7 +47,7 @@ final class ToDoInteractor: ToDoInteractorProtocol, ToDoInteractorDataStore {
     private let networkWorker: ToDoNetworkWorkerProtocol
     private let storageWorker: StorageWorkerProtocol
 
-    private var filterType = ToDoModel.FilterType.all
+    var filterType = ToDoModel.FilterType.all
 
     // MARK: - Init
     init(networkWorker: ToDoNetworkWorkerProtocol,
