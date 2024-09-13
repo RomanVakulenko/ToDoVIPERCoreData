@@ -7,7 +7,8 @@
 - left swipe to delete task
 - filtering tasks
 - marking done/notDone
-- second screen for adding/editing task 
+- second screen for adding/editing task
+- showing alerts
 
 **Stack**
 - VIPER, dependencies injection using constructor (init)
