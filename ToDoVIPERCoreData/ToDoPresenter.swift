@@ -11,25 +11,31 @@ import DifferenceKit
 typealias ToDoPresentable = ToDoPresenterProtocol
 
 protocol ToDoPresenterProtocol: AnyObject {
-    var view: ToDoViewProtocol? { get set }
+    var viewController: ToDoViewProtocol? { get set }
     var interactor: ToDoInteractorProtocol? { get set }
     var router: ToDoRoutingLogic? { get set }
+
     func presentWaitIndicator(response: ToDoScreenFlow.OnWaitIndicator.Response)
-    
-    func useTextViewText(request: ToDoScreenFlow.OnTextChanged.Request)
-    func getData(request: ToDoScreenFlow.OnDidLoadViews.Request)
     func presentToDoList(response: ToDoScreenFlow.Update.Response)
+
+    func getData(request: ToDoScreenFlow.OnDidLoadViews.Request)
 
     func didTapFilter(request: ToDoScreenFlow.OnFilterTapped.Request)
     func didTapCheckMark(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request)
+    func onSelectItem(request: ToDoScreenFlow.OnSelectItem.Request)
+
+    func addNewTask(request: ToDoScreenFlow.OnNewTaskButton.Request)
+
     func didSwipeLeftToDelete(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request)
-    func makeTransitionWith(model: DTOTask)
+    func presentRouteToAddOrEditTaskScreen(response: ToDoScreenFlow.OnSelectItem.Response)
+
+    func presentAlert(response: ToDoScreenFlow.AlertInfo.Response)
 }
 
 // MARK: - ToDoPresenter
 final class ToDoPresenter: ToDoPresentable {
 
-    weak var view: ToDoViewProtocol?
+    weak var viewController: ToDoViewProtocol?
     var interactor: ToDoInteractorProtocol?
     var router: ToDoRoutingLogic?
 
@@ -42,10 +48,17 @@ final class ToDoPresenter: ToDoPresentable {
         interactor?.getData(request: request)
     }
 
+    func addNewTask(request: ToDoScreenFlow.OnNewTaskButton.Request) {
+        interactor?.addNewTask(request: request)
+    }
+
     func didTapCheckMark(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request) {
         interactor?.didTapCheckMarkWith(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request(id: request.id))
     }
 
+    func onSelectItem(request: ToDoScreenFlow.OnSelectItem.Request) {
+        interactor?.onSelectItem(request: ToDoScreenFlow.OnSelectItem.Request(id: request.id))
+    }
 
     func didSwipeLeftToDelete(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request) {
         interactor?.didSwipeLeftToDelete(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request(id: request.id))
@@ -55,13 +68,10 @@ final class ToDoPresenter: ToDoPresentable {
         interactor?.didTapFilter(request: ToDoScreenFlow.OnFilterTapped.Request(filterType: request.filterType))
     }
 
-    func makeTransitionWith(model: DTOTask) {
-        router?.routeToOneTaskDetailsScreen()
+    func presentRouteToAddOrEditTaskScreen(response: ToDoScreenFlow.OnSelectItem.Response) {
+        router?.routeToOneTaskEditScreen()
     }
 
-    func useTextViewText(request: ToDoScreenFlow.OnTextChanged.Request) {
-        interactor?.useTextViewText(request: request)
-    }
 
     func presentToDoList(response: ToDoScreenFlow.Update.Response) {
         let taskList = response.taskList
@@ -92,8 +102,7 @@ final class ToDoPresenter: ToDoPresentable {
         for (index, task) in sortedTasks.enumerated() {
             group.enter()
 
-            makeOneTaskCell(task: task,
-                            id: task.id) { (toDoCellViewModel, id) in
+            makeOneTaskCell(task: task) { (toDoCellViewModel, id) in
                 os_unfair_lock_lock(&lock)
                 dictTasks[id] = toDoCellViewModel //чтобы одновременного обращения к словарю не было
                 os_unfair_lock_unlock(&lock)
@@ -126,12 +135,12 @@ final class ToDoPresenter: ToDoPresentable {
 
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                self.view?.displayUpdate(viewModel: ToDoScreenFlow.Update.ViewModel(
+                self.viewController?.displayUpdate(viewModel: ToDoScreenFlow.Update.ViewModel(
                     screenTitle: screenTitle,
                     subtitle: subtitle,
                     backViewColor: backViewColor,
                     newTaskButtonTitle: makeAddNewTaskButton(),
-                    newTaskButtonBackColor: UIHelper.Color.blueBackNewTask,
+                    newTaskButtonBackColor: UIHelper.Color.blueButton,
                     views: views,
                     items: tableItems))
             }
@@ -140,7 +149,21 @@ final class ToDoPresenter: ToDoPresentable {
 
     func presentWaitIndicator(response: ToDoScreenFlow.OnWaitIndicator.Response) {
         DispatchQueue.main.async { [weak self] in
-            self?.view?.displayWaitIndicator(viewModel: ToDoScreenFlow.OnWaitIndicator.ViewModel(isShow: response.isShow))
+            self?.viewController?.displayWaitIndicator(viewModel: ToDoScreenFlow.OnWaitIndicator.ViewModel(isShow: response.isShow))
+        }
+    }
+
+    func presentAlert(response: ToDoScreenFlow.AlertInfo.Response) {
+        let title = "Error"
+        let text = response.error.localizedDescription
+        let buttonTitle = "Ok"
+
+        DispatchQueue.main.async { [weak self] in
+            self?.viewController?.displayAlert(
+                viewModel: ToDoScreenFlow.AlertInfo.ViewModel(
+                    title: title,
+                    text: text,
+                    firstButtonTitle: buttonTitle))
         }
     }
 
@@ -169,8 +192,7 @@ final class ToDoPresenter: ToDoPresentable {
     }
 
 
-    private func makeOneTaskCell(task: Task,
-                                 id: Int,
+    private func makeOneTaskCell(task: OneTask,
                                  completion: @escaping (ToDoCellViewModel, Int) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
@@ -193,7 +215,7 @@ final class ToDoPresenter: ToDoPresentable {
             let taskSubtitle = NSAttributedString(
                 string: task.subTitle ?? "Task subtitle",
                 attributes: UIHelper.Attributed.grayInterMedium16)
-            let oneTaskCell = ToDoCellViewModel(id: String(id),
+            let oneTaskCell = ToDoCellViewModel(id: String(task.id),
                                                 backColor:  UIColor.white,
                                                 taskNameText: taskNameText,
                                                 taskSubtitleText: taskSubtitle,
@@ -204,9 +226,10 @@ final class ToDoPresenter: ToDoPresentable {
                                                 insets: UIEdgeInsets(top: 0,
                                                                      left: 0,
                                                                      bottom: 0,
-                                                                     right: 0))
+                                                                     right: 0), 
+                                                isEditMode: false)
 
-            completion(oneTaskCell, id)
+            completion(oneTaskCell, task.id)
         }
     }
 

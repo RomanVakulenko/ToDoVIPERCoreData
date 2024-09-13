@@ -1,19 +1,19 @@
 //
-//  ToDoStorageWorker.swift
+//  StorageWorker.swift
 //  ToDoVIPERCoreData
 //
 //  Created by Roman Vakulenko on 06.09.2024.
 //
 
 
-protocol ToDoStorageWorkerProtocol {
+protocol StorageWorkerProtocol {
     func fetchToDosFromDataBase(completion: @escaping (Result<TaskList, Error>) -> Void)
     func saveToDos(_ tasks: TaskList, completion: @escaping (Result<Void, Error>) -> Void)
     func isDBEmpty(completion: @escaping (Bool) -> Void)
 }
 
 
-final class ToDoStorageWorker: ToDoStorageWorkerProtocol {
+final class StorageWorker: StorageWorkerProtocol {
 
     // MARK: - Private properties
     private let coreDataManager: LocalStorageManagerProtocol

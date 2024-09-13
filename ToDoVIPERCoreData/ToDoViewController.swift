@@ -10,10 +10,10 @@ import SnapKit
 
 protocol ToDoViewProtocol: AnyObject {
     var presenter: ToDoPresenterProtocol? { get set }
-    //    var modelWithAddedQuantity: [ToDoModel] { get set }
 
     func displayUpdate(viewModel: ToDoScreenFlow.Update.ViewModel)
     func displayWaitIndicator(viewModel: ToDoScreenFlow.OnWaitIndicator.ViewModel)
+    func displayAlert(viewModel: ToDoScreenFlow.AlertInfo.ViewModel)
 }
 
 
@@ -21,12 +21,7 @@ final class ToDoViewController: UIViewController, ToDoViewProtocol, NavigationBa
 
     // MARK: - Public properties
     var presenter: ToDoPresenterProtocol?
-    var menuModel: [ToDoModel] = []
     lazy var contentView: ToDoViewLogic = ToDoScreenView()
-//    var modelWithAddedQuantity: [ToDoModel] = []
-
-    // MARK: - Private properties
-
 
     // MARK: - Lifecycle
     override func loadView() {
@@ -39,9 +34,11 @@ final class ToDoViewController: UIViewController, ToDoViewProtocol, NavigationBa
         super.viewDidLoad()
         configure()
         presenter?.getData(request: ToDoScreenFlow.OnDidLoadViews.Request())
-//        interactor?.onDidLoadViews(request: OneEmailDetailsFlow.OnDidLoadViews.Request())
-        //        menuModel = presenter?.interactor?.toDoModel ?? []
-        //        modelWithAddedQuantity = menuModel
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        presenter?.getData(request: ToDoScreenFlow.OnDidLoadViews.Request())
     }
 
     func leftNavBarButtonDidTapped() {
@@ -63,6 +60,11 @@ final class ToDoViewController: UIViewController, ToDoViewProtocol, NavigationBa
         contentView.displayWaitIndicator(viewModel: viewModel)
     }
 
+    func displayAlert(viewModel: ToDoScreenFlow.AlertInfo.ViewModel) {
+        showAlert(title: viewModel.title,
+                  message: viewModel.text,
+                  firstButtonTitle: viewModel.firstButtonTitle)
+    }
 
     // MARK: - Private methods
     private func configure() {
@@ -77,31 +79,21 @@ final class ToDoViewController: UIViewController, ToDoViewProtocol, NavigationBa
 
 // MARK: - ToDoViewOutput
 extension ToDoViewController: ToDoViewOutput {
-    func onChangeTextInTextView(_ viewModel: ToDoCellViewModel, 
-                                taskNameText: String, 
-                                taskSubtitleText: String,
-                                timeSubtitleText: String) {
-        presenter?.useTextViewText(request: ToDoScreenFlow.OnTextChanged.Request(
-            id: viewModel.id,
-            taskNameText: taskNameText,
-            taskSubtitleText: taskSubtitleText,
-            timeSubtitleText: timeSubtitleText))
-    }
 
     func didTapNewTaskButton() {
-        ()
-    }
-
-    func didTapTaskCell(_ viewModel: ToDoCellViewModel) {
-        ()
-    }
-
-    func didTapCheckMark(_ viewModel: ToDoCellViewModel) {
-        presenter?.didTapCheckMark(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request(id: viewModel.id))
+        presenter?.addNewTask(request: ToDoScreenFlow.OnNewTaskButton.Request())
     }
 
     func didTapFilterCell(_ viewModel: OneFilterCellViewModel) {
         presenter?.didTapFilter(request: ToDoScreenFlow.OnFilterTapped.Request(filterType: viewModel.typeOfFilterCell))
+    }
+
+    func didTapCell(_ viewModel: ToDoCellViewModel) {
+        presenter?.onSelectItem(request: ToDoScreenFlow.OnSelectItem.Request(id: viewModel.id))
+    }
+
+    func didTapCheckMark(_ viewModel: ToDoCellViewModel) {
+        presenter?.didTapCheckMark(request: ToDoScreenFlow.OnCheckMarkOrSwipe.Request(id: viewModel.id))
     }
 
     func didSwipeLeftToDelete(_ viewModel: ToDoCellViewModel) {

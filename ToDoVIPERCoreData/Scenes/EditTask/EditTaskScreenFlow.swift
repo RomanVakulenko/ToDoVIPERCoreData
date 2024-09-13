@@ -1,40 +1,27 @@
 //
-//  ToDoScreenFlow.swift
-//  ToDoVIPERCoreData
+//  EditTaskScreenFlow.swift
+//  EditTaskVIPERCoreData
 //
-//  Created by Roman Vakulenko on 05.09.2024.
+//  Created by Roman Vakulenko on 12.09.2024. //только сегодня получил ответ, что надо делать второй экран
 //
 
 import Foundation
 
-enum ToDoScreenFlow {
+enum EditTaskScreenFlow {
 
     enum Update {
 
-        struct Request {
-            var filterType: ToDoModel.FilterType
-        }
+        struct Request { }
 
         struct Response {
-            let taskList: TaskList
             let totalTasks: Int
-            let completedTasksCount: Int?
-            let filterType: ToDoModel.FilterType
+            let task: OneTask?
+            let type: EditTaskModel.EditType
         }
 
-        typealias ViewModel = ToDoModel.ViewModel
+        typealias ViewModel = EditTaskModel.ViewModel
     }
 
-    enum OnFilterTapped {
-
-        struct Request {
-            let filterType: ToDoModel.FilterType
-        }
-
-        struct Response { }
-
-        struct ViewModel { }
-    }
 
     enum OnDidLoadViews {
 
@@ -47,18 +34,7 @@ enum ToDoScreenFlow {
         struct ViewModel {}
     }
 
-    enum OnCheckMarkOrSwipe {
-
-        struct Request {
-            let id: String
-        }
-
-        struct Response {}
-
-        struct ViewModel {}
-    }
-
-    enum OnNewTaskButton {
+    enum OnSaveOrDeleteTap {
 
         struct Request {}
 
@@ -67,15 +43,19 @@ enum ToDoScreenFlow {
         struct ViewModel {}
     }
 
-    enum OnSelectItem {
+
+    enum OnTextChanged{
 
         struct Request {
-            let id: String?
+            let id: Int
+            let taskNameText: String
+            let taskSubtitleText: String
+            let timeSubtitleText: String
         }
 
-        struct Response { }
+        struct Response {}
 
-        struct ViewModel { }
+        struct ViewModel {}
     }
 
     enum RoutePayload {
@@ -105,7 +85,8 @@ enum ToDoScreenFlow {
         struct Request {}
 
         struct Response {
-            let error: Error
+            let error: EditTaskModel.Errors?
+            let alertAt: EditTaskModel.AlertAtOrCase?
         }
 
         struct ViewModel {

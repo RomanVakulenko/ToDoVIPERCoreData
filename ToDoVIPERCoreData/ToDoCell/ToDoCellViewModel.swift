@@ -9,15 +9,17 @@ import Foundation
 import DifferenceKit
 
 protocol ToDoCellViewModelOutput: AnyObject {
-    func didTapTaskCell(_ viewModel: ToDoCellViewModel)
+    func didTapCell(_ viewModel: ToDoCellViewModel)
     func didTapCheckMark(_ viewModel: ToDoCellViewModel)
     func didSwipeLeftToDelete(_ viewModel: ToDoCellViewModel)
+
+}
+
+protocol ToDoCellViewModelChangeTextOutput: AnyObject {
     func onChangeTextInTextView(_ viewModel: ToDoCellViewModel,
                                 taskNameText: String,
                                 taskSubtitleText: String,
                                 timeSubtitleText: String)
-
-
 }
 
 struct ToDoCellViewModel {
@@ -25,15 +27,17 @@ struct ToDoCellViewModel {
     let backColor: UIColor
     let taskNameText: NSAttributedString
     let taskSubtitleText: NSAttributedString
-    let checkMarkImage: UIImage
+    let checkMarkImage: UIImage?
     let separatorColor: UIColor
     let todaySubtitle: String
     let timeSubtitle: String
     let insets: UIEdgeInsets
+    var isEditMode: Bool
 
     weak var output: ToDoCellViewModelOutput?
-    
-    init(id: String, backColor: UIColor, taskNameText: NSAttributedString, taskSubtitleText: NSAttributedString, checkMarkImage: UIImage, separatorColor: UIColor, todaySubtitle: String, timeSubtitle: String, insets: UIEdgeInsets, output: ToDoCellViewModelOutput? = nil) {
+    weak var textOutput: ToDoCellViewModelChangeTextOutput?
+
+    init(id: String, backColor: UIColor, taskNameText: NSAttributedString, taskSubtitleText: NSAttributedString, checkMarkImage: UIImage?, separatorColor: UIColor, todaySubtitle: String, timeSubtitle: String, insets: UIEdgeInsets, output: ToDoCellViewModelOutput? = nil, isEditMode: Bool) {
         self.id = id
         self.backColor = backColor
         self.taskNameText = taskNameText
@@ -44,10 +48,11 @@ struct ToDoCellViewModel {
         self.timeSubtitle = timeSubtitle
         self.insets = insets
         self.output = output
+        self.isEditMode = isEditMode
     }
 
     func didTapCell() {
-        output?.didTapTaskCell(self)
+        output?.didTapCell(self)
     }
 
     func didTapCheckView() {
@@ -61,10 +66,12 @@ struct ToDoCellViewModel {
     func onChangeText(taskNameText: String,
                       taskSubtitleText: String,
                       timeSubtitleText: String) {
-        output?.onChangeTextInTextView(self,
-                                       taskNameText: taskNameText,
-                                       taskSubtitleText: taskSubtitleText,
-                                       timeSubtitleText: timeSubtitleText)
+        if isEditMode {
+            textOutput?.onChangeTextInTextView(self,
+                                               taskNameText: taskNameText,
+                                               taskSubtitleText: taskSubtitleText,
+                                               timeSubtitleText: timeSubtitleText)
+        }
     }
 }
 

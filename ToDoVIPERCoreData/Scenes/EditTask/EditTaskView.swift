@@ -1,30 +1,29 @@
 //
-//  ToDoView.swift
-//  ToDoVIPERCoreData
+//  EditTaskView.swift
+//  EditTaskVIPERCoreData
 //
-//  Created by Roman Vakulenko on 05.09.2024.
+//  Created by Roman Vakulenko on 12.09.2024. //только сегодня получил ответ, что надо делать второй экран
 //
 
 import Foundation
 import SnapKit
 
 
-protocol ToDoViewOutput: AnyObject,
-                         ToDoCollectionViewCellViewOutput,
-                         ToDoCellViewModelOutput,
-                         CollectionFilterViewOutput {
-    func didTapNewTaskButton()
+protocol EditTaskViewOutput: AnyObject,
+                             ToDoCellViewModelChangeTextOutput {
+    func didTapSaveButton()
+    func didTapDeleteButton()
 }
 
-protocol ToDoViewLogic: UIView {
-    func update(viewModel: ToDoModel.ViewModel)
-    func displayWaitIndicator(viewModel: ToDoScreenFlow.OnWaitIndicator.ViewModel)
+protocol EditTaskViewLogic: UIView {
+    func update(viewModel: EditTaskModel.ViewModel)
+    func displayWaitIndicator(viewModel: EditTaskScreenFlow.OnWaitIndicator.ViewModel)
 
-    var output: ToDoViewOutput? { get set }
+    var output: EditTaskViewOutput? { get set }
 }
 
 
-final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
+final class EditTaskScreenView: UIView, EditTaskViewLogic, SpinnerDisplayable {
 
     enum Constants {
         static let newButtonWidth: CGFloat = 128
@@ -33,14 +32,14 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
 
     // MARK: - Public properties
 
-    weak var output: ToDoViewOutput?
+    weak var output: EditTaskViewOutput?
 
     // MARK: - Private properties
     private lazy var backView: UIView = {
         let view = UIView()
         return view
     }()
-
+    
     private lazy var screenTitle: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.black
@@ -48,25 +47,25 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
         label.font = UIFont.boldSystemFont(ofSize: 20)
         return label
     }()
-
-    private lazy var subtitle: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor.black
-        label.font = UIFont(name: "SFUIDisplay-Bold", size: 16)
-        label.font = UIFont.boldSystemFont(ofSize: 16)
-        return label
+    
+    private lazy var navBarSeparatorView: UIView = {
+        let line = UIView()
+        return line
     }()
 
-    private lazy var newTaskButton: UIButton = {
+    private lazy var saveButton: UIButton = {
         let view = UIButton(type: .system)
         view.backgroundColor = .none
         view.layer.cornerRadius = UIHelper.Margins.medium16px
-        view.addTarget(self, action: #selector(didTapNewTaskButton(_:)), for: .touchUpInside)
+        view.addTarget(self, action: #selector(didTapSaveButton(_:)), for: .touchUpInside)
         return view
     }()
 
-    private lazy var filterView: CollectionFilterView = {
-        let view = CollectionFilterView()
+    private lazy var deleteButton: UIButton = {
+        let view = UIButton(type: .system)
+        view.backgroundColor = .none
+        view.layer.cornerRadius = UIHelper.Margins.medium16px
+        view.addTarget(self, action: #selector(didTapDeleteButton(_:)), for: .touchUpInside)
         return view
     }()
 
@@ -87,7 +86,7 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
         return collectionView
     }()
 
-    private var viewModel: ToDoModel.ViewModel?
+    private var viewModel: EditTaskModel.ViewModel?
 
 
     // MARK: - Init
@@ -107,36 +106,26 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
 
     // MARK: - Public Methods
 
-    func update(viewModel: ToDoModel.ViewModel) {
+    func update(viewModel: EditTaskModel.ViewModel) {
         self.viewModel = viewModel
 
-        if newTaskButton.titleLabel?.text != viewModel.newTaskButtonTitle.string {
-            newTaskButton.setAttributedTitle(viewModel.newTaskButtonTitle, for: .normal)
-            newTaskButton.backgroundColor = viewModel.newTaskButtonBackColor
+        if saveButton.titleLabel?.text != viewModel.saveButtonTitle.string {
+            saveButton.setAttributedTitle(viewModel.saveButtonTitle, for: .normal)
+            saveButton.backgroundColor = viewModel.saveButtonBackColor
+
+            deleteButton.setAttributedTitle(viewModel.deleteButtonTitle, for: .normal)
+            deleteButton.backgroundColor = viewModel.deleteButtonBackColor
 
             backgroundColor = viewModel.backViewColor
             backView.backgroundColor = viewModel.backViewColor
-            screenTitle.attributedText = viewModel.screenTitle
-            subtitle.attributedText = viewModel.subtitle
-        }
-
-        for (i, _) in viewModel.views.enumerated() {
-            let viewModel = viewModel.views[i].base
-
-            switch viewModel {
-            case let vm as CollectionFilterViewModel:
-                filterView.viewModel = vm
-                filterView.update(viewModel: vm)
-                filterView.output = output
-            default:
-                break
-            }
+            navBarSeparatorView.layer.borderColor = viewModel.separatorColor.cgColor
+            navBarSeparatorView.layer.borderWidth = UIHelper.Margins.small1px
         }
 
         collectionView.reloadData()
     }
 
-    func displayWaitIndicator(viewModel: ToDoScreenFlow.OnWaitIndicator.ViewModel) {
+    func displayWaitIndicator(viewModel: EditTaskScreenFlow.OnWaitIndicator.ViewModel) {
         if viewModel.isShow {
             showSpinner()
         } else {
@@ -145,8 +134,12 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
     }
 
     // MARK: - Actions
-    @objc func didTapNewTaskButton(_ sender: UIButton) {
-        output?.didTapNewTaskButton()
+    @objc func didTapSaveButton(_ sender: UIButton) {
+        output?.didTapSaveButton()
+    }
+
+    @objc func didTapDeleteButton(_ sender: UIButton) {
+        output?.didTapDeleteButton()
     }
 
     // MARK: - Private Methods
@@ -164,7 +157,7 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
 
     private func addSubviews() {
         self.addSubview(backView)
-        [screenTitle, subtitle, newTaskButton, filterView, collectionView].forEach { backView.addSubview($0) }
+        [screenTitle, navBarSeparatorView, saveButton, deleteButton, collectionView].forEach { backView.addSubview($0) }
     }
 
     private func configureConstraints() {
@@ -172,33 +165,29 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
             $0.top.equalTo(self.safeAreaLayoutGuide.snp.top)
             $0.leading.trailing.bottom.equalToSuperview()
         }
-
-        screenTitle.snp.makeConstraints {
-            $0.top.equalTo(backView.snp.top).offset(UIHelper.Margins.large22px)
-            $0.leading.equalToSuperview().offset(UIHelper.Margins.medium16px)
+        
+        navBarSeparatorView.snp.makeConstraints {
+            $0.top.equalTo(backView.snp.top)
+            $0.height.equalTo(UIHelper.Margins.small1px)
+            $0.leading.trailing.equalToSuperview()
         }
 
-        subtitle.snp.makeConstraints {
-            $0.top.equalTo(screenTitle.snp.bottom).offset(UIHelper.Margins.medium8px)
-            $0.leading.equalToSuperview().offset(UIHelper.Margins.medium16px)
-        }
-
-        newTaskButton.snp.makeConstraints {
-            $0.top.equalTo(backView.snp.top).offset(UIHelper.Margins.large26px)
+        saveButton.snp.makeConstraints {
+            $0.top.equalTo(navBarSeparatorView.snp.bottom).offset(UIHelper.Margins.large26px)
             $0.trailing.equalToSuperview().offset(-UIHelper.Margins.medium16px)
             $0.height.equalTo(UIHelper.Margins.huge42px)
             $0.width.equalTo(Constants.newButtonWidth)
         }
 
-        filterView.snp.makeConstraints {
-            $0.top.equalTo(subtitle.snp.bottom).offset(UIHelper.Margins.large26px)
-            $0.height.equalTo(UIHelper.Margins.large30px)
+        deleteButton.snp.makeConstraints {
+            $0.top.equalTo(navBarSeparatorView.snp.top).offset(UIHelper.Margins.large26px)
             $0.leading.equalToSuperview().offset(UIHelper.Margins.medium16px)
-            $0.trailing.equalToSuperview().offset(-UIHelper.Margins.medium16px)
+            $0.height.equalTo(UIHelper.Margins.huge42px)
+            $0.width.equalTo(Constants.newButtonWidth)
         }
 
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(filterView.snp.bottom).offset(UIHelper.Margins.large26px)
+            $0.top.equalTo(saveButton.snp.bottom).offset(UIHelper.Margins.large26px)
             $0.leading.equalToSuperview()
             $0.trailing.bottom.equalToSuperview()
         }
@@ -206,9 +195,9 @@ final class ToDoScreenView: UIView, ToDoViewLogic, SpinnerDisplayable {
 }
 
 // MARK: - UICollectionViewDataSource
-extension ToDoScreenView: UICollectionViewDataSource {
+extension EditTaskScreenView: UICollectionViewDataSource {
 
-    func collectionView(_ collectionView: UICollectionView, 
+    func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
         return viewModel?.items.count ?? 0
     }
@@ -220,7 +209,7 @@ extension ToDoScreenView: UICollectionViewDataSource {
         if let vm = item as? ToDoCellViewModel {
             let cell = collectionView.dequeueReusableCell(for: indexPath) as ToDoCollectionViewCell
             cell.viewModel = vm
-            cell.viewModel?.output = output
+            cell.viewModel?.textOutput = output
             return cell
         } else {
             return UICollectionViewCell()
@@ -231,11 +220,11 @@ extension ToDoScreenView: UICollectionViewDataSource {
 
 //MARK: - UICollectionViewDelegateFlowLayout
 
-extension ToDoScreenView: UICollectionViewDelegateFlowLayout {
+extension EditTaskScreenView: UICollectionViewDelegateFlowLayout {
 
     private var inset: CGFloat { return UIHelper.Margins.medium16px }
 
-    func collectionView(_ collectionView: UICollectionView, 
+    func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.bounds.width - inset * 2
@@ -243,8 +232,8 @@ extension ToDoScreenView: UICollectionViewDelegateFlowLayout {
         return CGSize(width: width, height: height)
     }
     //spacing между рядами/строками для вертикальной коллекции
-    func collectionView(_ collectionView: UICollectionView, 
-                        layout collectionViewLayout: UICollectionViewLayout, 
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
                         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         UIHelper.Margins.medium16px
     }
