@@ -20,7 +20,7 @@ final class EditTaskModuleBuilder: EditTaskModuleBuilderProtocol {
                            type: EditTaskModel.EditType) -> UIViewController {
         let viewController = EditTaskViewController()
 
-        let storageManager = StorageDataManager.shared
+        let storageManager = StorageDataManager(localStorageService: CoreDataService())
         let storageWorker = StorageWorker(coreDataManager: storageManager)
         let interactor = EditTaskInteractor(storageWorker: storageWorker,
                                             taskList: taskList,

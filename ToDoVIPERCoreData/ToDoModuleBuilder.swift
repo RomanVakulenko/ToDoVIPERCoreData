@@ -16,7 +16,7 @@ final class ToDoModuleBuilder: ToDoModuleBuilderProtocol {
     func getController() -> UIViewController {
         let viewController = ToDoViewController()
 
-        let storageManager = StorageDataManager.shared
+        let storageManager = StorageDataManager(localStorageService: CoreDataService())
         let networkManager = NetworkManager(networkService: NetworkService(),
                                             mapper: DataMapper())
         let networkWorker = ToDoNetworkWorker(networkManager: networkManager)
