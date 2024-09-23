@@ -16,14 +16,28 @@ protocol LocalStorageManagerProtocol {
 
 
 final class StorageDataManager: LocalStorageManagerProtocol {
-    static let shared = StorageDataManager()
-    private var localStorageService: LocalStorageServiceProtocol = CoreDataService.shared
+    private let localStorageService: LocalStorageServiceProtocol
 
+    // MARK: - Init
+    init(localStorageService: LocalStorageServiceProtocol) {
+        self.localStorageService = localStorageService
+    }
+
+    // Для дефолтной реализации
+    static func createDefault() -> StorageDataManager {
+        return StorageDataManager(localStorageService: CoreDataService())
+    }
+
+//    Для тестов можно передать mock в качестве заглушки
+//    let mockService = MockLocalStorageService()
+//    let testStorageManager = StorageDataManager(localStorageService: mockService)
+
+    // MARK: - Public methods
     func fetchToDos(completion: @escaping (Result<TaskList, Error>) -> Void) {
         localStorageService.fetchTasks { result in
             switch result {
             case .success(let dtoTaskList):
-                let tasks = dtoTaskList.todos.map { 
+                let tasks = dtoTaskList.todos.map {
                     OneTask(from: DTOTask(id: Int($0.id),
                                        todo: $0.todo,
                                        subTitle: $0.subTitle ?? "",
@@ -42,13 +56,11 @@ final class StorageDataManager: LocalStorageManagerProtocol {
         }
     }
 
-
     func isContextEmpty(completion: @escaping (Bool) -> Void) {
         localStorageService.isContextEmpty { isEmpty in
             completion(isEmpty)
         }
     }
-
 
     func saveToDos(_ tasks: TaskList, completion: @escaping (Result<Void, Error>) -> Void) {
         let dtoTaskList = DTOTaskList(todos: tasks.tasks.map { task in
